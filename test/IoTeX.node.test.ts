@@ -33,20 +33,20 @@ describe('IoTeX Node', () => {
       expect(node.description.outputs).toContain('main');
     });
 
-    it('should define 6 resources', () => {
+    it('should define 8 resources', () => {
       const resourceProp = node.description.properties.find(
         (p: any) => p.name === 'resource'
       );
       expect(resourceProp).toBeDefined();
       expect(resourceProp!.type).toBe('options');
-      expect(resourceProp!.options).toHaveLength(6);
+      expect(resourceProp!.options).toHaveLength(8);
     });
 
     it('should have operation dropdowns for each resource', () => {
       const operations = node.description.properties.filter(
         (p: any) => p.name === 'operation'
       );
-      expect(operations.length).toBe(6);
+      expect(operations.length).toBe(8);
     });
 
     it('should require credentials', () => {
@@ -87,363 +87,176 @@ describe('Accounts Resource', () => {
     };
   });
 
-  describe('getAccount operation', () => {
-    it('should get account details successfully', async () => {
-      const mockResponse = {
-        address: 'io1abc123def456',
-        balance: '1000000000000000000',
-        nonce: 5,
-        pendingNonce: 6,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
-        if (paramName === 'operation') return 'getAccount';
-        if (paramName === 'address') return 'io1abc123def456';
-        return '';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/accounts/io1abc123def456',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-    });
-
-    it('should handle missing address error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAccount';
-        if (paramName === 'address') return '';
-        return '';
-      });
-
-      await expect(executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]))
-        .rejects.toThrow('Account address is required');
-    });
-  });
-
-  describe('getAccountActions operation', () => {
-    it('should get account actions successfully', async () => {
-      const mockResponse = {
-        actions: [
-          { hash: 'action1', timestamp: '2023-01-01T00:00:00Z' },
-          { hash: 'action2', timestamp: '2023-01-02T00:00:00Z' },
-        ],
-        total: 2,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number, defaultValue?: any) => {
-        if (paramName === 'operation') return 'getAccountActions';
-        if (paramName === 'address') return 'io1abc123def456';
-        if (paramName === 'start') return defaultValue || 0;
-        if (paramName === 'count') return defaultValue || 10;
-        return defaultValue || '';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/accounts/io1abc123def456/actions?start=0&count=10',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('getAccountBalance operation', () => {
-    it('should get account balance successfully', async () => {
-      const mockResponse = {
-        address: 'io1abc123def456',
-        balance: '1000000000000000000',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAccountBalance';
-        if (paramName === 'address') return 'io1abc123def456';
-        return '';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-
-  describe('getAccountMeta operation', () => {
-    it('should get account metadata successfully', async () => {
-      const mockResponse = {
-        address: 'io1abc123def456',
-        meta: {
-          name: 'Test Account',
-          isContract: false,
-        },
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAccountMeta';
-        if (paramName === 'address') return 'io1abc123def456';
-        return '';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/accounts/meta?address=io1abc123def456',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('error handling', () => {
-    it('should handle API errors when continueOnFail is true', async () => {
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAccount';
-        if (paramName === 'address') return 'io1abc123def456';
-        return '';
-      });
-
-      const error = new Error('API Error');
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(error);
-
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual({ error: 'API Error' });
-    });
-
-    it('should throw unknown operation error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockReturnValue('unknownOperation');
-
-      await expect(executeAccountsOperations.call(mockExecuteFunctions, [{ json: {} }]))
-        .rejects.toThrow('Unknown operation: unknownOperation');
-    });
-  });
-});
-
-describe('Actions Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
+  test('should get account details successfully', async () => {
+    const mockAccountData = {
+      address: 'io1test123',
+      balance: '1000000000000000000',
+      nonce: 10,
     };
-  });
 
-  describe('getActionByHash', () => {
-    it('should get action by hash successfully', async () => {
-      const mockResponse = {
-        actionInfo: {
-          action: { core: { version: 1, nonce: 123 } },
-          actHash: 'test-hash',
-          blkHash: 'block-hash',
-        },
-      };
-
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('getActionByHash')
-        .mockReturnValueOnce('test-hash');
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeActionsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
-
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/actions/test-hash',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'getAccount';
+      if (paramName === 'address') return 'io1test123';
+      return undefined;
     });
 
-    it('should handle errors when getting action by hash', async () => {
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('getActionByHash')
-        .mockReturnValueOnce('invalid-hash');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockAccountData);
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(
-        new Error('Action not found'),
-      );
+    const items = [{ json: {} }];
+    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
 
-      await expect(
-        executeActionsOperations.call(mockExecuteFunctions, [{ json: {} }]),
-      ).rejects.toThrow('Action not found');
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockAccountData);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://iotexapi.com/api/accounts/io1test123',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      json: true,
     });
   });
 
-  describe('getActions', () => {
-    it('should get actions list successfully', async () => {
-      const mockResponse = {
-        actionInfo: [
-          { action: { core: { version: 1 } }, actHash: 'hash1' },
-          { action: { core: { version: 1 } }, actHash: 'hash2' },
-        ],
-        total: 2,
-      };
+  test('should get account balance successfully', async () => {
+    const mockBalanceData = {
+      balance: '1000000000000000000',
+    };
 
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('getActions')
-        .mockReturnValueOnce(0)
-        .mockReturnValueOnce(10)
-        .mockReturnValueOnce('')
-        .mockReturnValueOnce('');
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'getBalance';
+      if (paramName === 'address') return 'io1test123';
+      return undefined;
+    });
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBalanceData);
 
-      const result = await executeActionsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
+    const items = [{ json: {} }];
+    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockBalanceData);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://iotexapi.com/api/accounts/io1test123/balance',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      json: true,
     });
   });
 
-  describe('sendAction', () => {
-    it('should send action successfully', async () => {
-      const mockResponse = {
-        actionHash: 'new-action-hash',
-        status: 'success',
-      };
+  test('should get account transactions with pagination', async () => {
+    const mockTransactionsData = {
+      transactions: [
+        { hash: 'tx1', amount: '100' },
+        { hash: 'tx2', amount: '200' },
+      ],
+      total: 2,
+    };
 
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('sendAction')
-        .mockReturnValueOnce('serialized-action-data');
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
+      if (paramName === 'operation') return 'getAccountTransactions';
+      if (paramName === 'address') return 'io1test123';
+      if (paramName === 'limit') return 50;
+      if (paramName === 'offset') return 10;
+      return defaultValue;
+    });
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransactionsData);
 
-      const result = await executeActionsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
+    const items = [{ json: {} }];
+    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://iotexapi.com/api/actions',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          serializedAction: 'serialized-action-data',
-        },
-        json: true,
-      });
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockTransactionsData);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://iotexapi.com/api/accounts/io1test123/transactions',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      qs: {
+        limit: 50,
+        offset: 10,
+      },
+      json: true,
     });
   });
 
-  describe('getReceiptByAction', () => {
-    it('should get action receipt successfully', async () => {
-      const mockResponse = {
-        receiptInfo: {
-          receipt: { status: 1, blkHeight: 123 },
-          blkHash: 'block-hash',
-        },
-      };
+  test('should get account actions with pagination', async () => {
+    const mockActionsData = {
+      actions: [
+        { actionHash: 'action1', actionType: 'transfer' },
+        { actionHash: 'action2', actionType: 'execution' },
+      ],
+      total: 2,
+    };
 
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('getReceiptByAction')
-        .mockReturnValueOnce('action-hash');
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
+      if (paramName === 'operation') return 'getAccountActions';
+      if (paramName === 'address') return 'io1test123';
+      if (paramName === 'limit') return 25;
+      if (paramName === 'offset') return 5;
+      return defaultValue;
+    });
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockActionsData);
 
-      const result = await executeActionsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
+    const items = [{ json: {} }];
+    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockActionsData);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://iotexapi.com/api/accounts/io1test123/actions',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      qs: {
+        limit: 25,
+        offset: 5,
+      },
+      json: true,
     });
   });
 
-  describe('estimateActionGasConsumption', () => {
-    it('should estimate gas consumption successfully', async () => {
-      const mockResponse = {
-        gas: 21000,
-        gasPrice: '1000000000000',
-      };
-
-      const actionData = {
-        core: {
-          version: 1,
-          nonce: 123,
-          gasLimit: 21000,
-        },
-      };
-
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('estimateActionGasConsumption')
-        .mockReturnValueOnce(actionData);
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeActionsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
-
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://iotexapi.com/api/actions/estimate-gas',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          action: actionData,
-        },
-        json: true,
-      });
+  test('should handle API errors', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'getAccount';
+      if (paramName === 'address') return 'invalid-address';
+      return undefined;
     });
+
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue({
+      httpCode: 404,
+      message: 'Account not found',
+    });
+
+    const items = [{ json: {} }];
+
+    await expect(executeAccountsOperations.call(mockExecuteFunctions, items)).rejects.toThrow();
+  });
+
+  test('should continue on fail when configured', async () => {
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'getAccount';
+      if (paramName === 'address') return 'invalid-address';
+      return undefined;
+    });
+
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+
+    const items = [{ json: {} }];
+    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.error).toBe('API Error');
   });
 });
 
@@ -469,40 +282,29 @@ describe('Blocks Resource', () => {
 
   test('should get block by height successfully', async () => {
     const mockBlockData = {
-      block: {
-        header: {
-          height: '12345',
-          timestamp: '1234567890',
-        },
-        body: {
-          actions: [],
-        },
-      },
+      height: 1000,
+      hash: '0x123abc',
+      timestamp: '2023-01-01T00:00:00Z',
+      transactions: [],
     };
 
     mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlockByHeight';
-        case 'height':
-          return 12345;
-        default:
-          return undefined;
-      }
+      if (paramName === 'operation') return 'getBlockByHeight';
+      if (paramName === 'height') return 1000;
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockData);
 
-    const items = [{ json: {} }];
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, items);
+    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockBlockData);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/blocks/12345',
+      url: 'https://iotexapi.com/api/blocks/1000',
       headers: {
-        'Authorization': 'Bearer test-api-key',
+        'X-API-Key': 'test-api-key',
         'Content-Type': 'application/json',
       },
       json: true,
@@ -511,163 +313,338 @@ describe('Blocks Resource', () => {
 
   test('should get block by hash successfully', async () => {
     const mockBlockData = {
-      block: {
-        header: {
-          hash: 'test-hash-123',
-          height: '12345',
-        },
-        body: {
-          actions: [],
-        },
-      },
+      height: 1000,
+      hash: '0x123abc',
+      timestamp: '2023-01-01T00:00:00Z',
     };
 
     mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlockByHash';
-        case 'hash':
-          return 'test-hash-123';
-        default:
-          return undefined;
-      }
+      if (paramName === 'operation') return 'getBlockByHash';
+      if (paramName === 'hash') return '0x123abc';
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockData);
 
-    const items = [{ json: {} }];
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, items);
+    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockBlockData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/blocks/test-hash-123',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
   });
 
-  test('should get blocks list successfully', async () => {
+  test('should get blocks list with pagination', async () => {
     const mockBlocksData = {
       blocks: [
-        { header: { height: '10' } },
-        { header: { height: '11' } },
+        { height: 1000, hash: '0x123' },
+        { height: 999, hash: '0x456' },
       ],
       total: 100,
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlocks';
-        case 'start':
-          return 10;
-        case 'count':
-          return 2;
-        default:
-          return undefined;
-      }
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
+      if (paramName === 'operation') return 'getBlocks';
+      if (paramName === 'limit') return 10;
+      if (paramName === 'offset') return 0;
+      return defaultValue;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlocksData);
 
-    const items = [{ json: {} }];
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, items);
+    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockBlocksData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/blocks',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      qs: {
-        start: 10,
-        count: 2,
-      },
-      json: true,
-    });
   });
 
-  test('should get chain metadata successfully', async () => {
-    const mockMetaData = {
-      chainMeta: {
-        height: '12345',
-        numActions: '54321',
-        tps: '100',
-        epoch: {
-          num: '123',
-          height: '12000',
-        },
-      },
+  test('should get latest block successfully', async () => {
+    const mockLatestBlock = {
+      height: 2000,
+      hash: '0xlatest',
+      timestamp: '2023-12-01T00:00:00Z',
     };
 
     mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getChainMeta';
-        default:
-          return undefined;
-      }
+      if (paramName === 'operation') return 'getLatestBlock';
+      return undefined;
     });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockMetaData);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockLatestBlock);
 
-    const items = [{ json: {} }];
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, items);
+    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockMetaData);
+    expect(result[0].json).toEqual(mockLatestBlock);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/blocks/meta',
+      url: 'https://iotexapi.com/api/blocks/latest',
       headers: {
-        'Authorization': 'Bearer test-api-key',
+        'X-API-Key': 'test-api-key',
         'Content-Type': 'application/json',
       },
       json: true,
     });
   });
 
-  test('should get block producers successfully', async () => {
-    const mockProducersData = {
-      blockProducers: [
-        {
-          address: 'producer1',
-          votes: '1000000',
-        },
-        {
-          address: 'producer2',
-          votes: '900000',
-        },
+  test('should get block transactions successfully', async () => {
+    const mockTransactions = {
+      transactions: [
+        { hash: '0xtx1', type: 'transfer' },
+        { hash: '0xtx2', type: 'execution' },
       ],
     };
 
     mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlockProducers';
-        default:
-          return undefined;
-      }
+      if (paramName === 'operation') return 'getBlockTransactions';
+      if (paramName === 'height') return 1500;
+      return undefined;
     });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockProducersData);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransactions);
 
-    const items = [{ json: {} }];
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, items);
+    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockProducersData);
+    expect(result[0].json).toEqual(mockTransactions);
+  });
+
+  test('should handle API errors gracefully', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'getLatestBlock';
+      return undefined;
+    });
+
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual({ error: 'API Error' });
+  });
+
+  test('should throw error for unknown operation', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'unknownOperation';
+      return undefined;
+    });
+
+    await expect(
+      executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('Unknown operation: unknownOperation');
+  });
+});
+
+describe('Transactions Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({
+        apiKey: 'test-api-key',
+        baseUrl: 'https://iotexapi.com',
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: {
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn(),
+      },
+    };
+  });
+
+  describe('getTransaction operation', () => {
+    it('should get transaction by hash successfully', async () => {
+      const mockTransaction = {
+        hash: '0x123abc',
+        from: '0xfrom',
+        to: '0xto',
+        value: '1000',
+        status: 'confirmed',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
+        if (paramName === 'operation') return 'getTransaction';
+        if (paramName === 'hash') return '0x123abc';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransaction);
+
+      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://iotexapi.com/api/transactions/0x123abc',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        json: true,
+      });
+
+      expect(result).toEqual([{ json: mockTransaction, pairedItem: { item: 0 } }]);
+    });
+
+    it('should handle error when getting transaction', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
+        if (paramName === 'operation') return 'getTransaction';
+        if (paramName === 'hash') return '0xinvalid';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Transaction not found'));
+
+      await expect(executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]))
+        .rejects.toThrow('Transaction not found');
+    });
+  });
+
+  describe('getTransactions operation', () => {
+    it('should get list of transactions with parameters', async () => {
+      const mockTransactions = {
+        transactions: [
+          { hash: '0x123', from: '0xfrom1', to: '0xto1' },
+          { hash: '0x456', from: '0xfrom2', to: '0xto2' },
+        ],
+        total: 2,
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
+        if (paramName === 'operation') return 'getTransactions';
+        if (paramName === 'limit') return 10;
+        if (paramName === 'offset') return 0;
+        if (paramName === 'address') return '0xaddress';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransactions);
+
+      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://iotexapi.com/api/transactions?limit=10&offset=0&address=0xaddress',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        json: true,
+      });
+
+      expect(result).toEqual([{ json: mockTransactions, pairedItem: { item: 0 } }]);
+    });
+  });
+
+  describe('sendTransaction operation', () => {
+    it('should send transaction successfully', async () => {
+      const mockResponse = {
+        txHash: '0x789def',
+        status: 'pending',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
+        if (paramName === 'operation') return 'sendTransaction';
+        if (paramName === 'signedTransaction') return '0xsignedtx';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: 'https://iotexapi.com/api/transactions',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        body: {
+          signedTransaction: '0xsignedtx',
+        },
+        json: true,
+      });
+
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    });
+  });
+
+  describe('getTransactionReceipt operation', () => {
+    it('should get transaction receipt successfully', async () => {
+      const mockReceipt = {
+        transactionHash: '0x123abc',
+        status: 1,
+        gasUsed: '21000',
+        logs: [],
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
+        if (paramName === 'operation') return 'getTransactionReceipt';
+        if (paramName === 'hash') return '0x123abc';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockReceipt);
+
+      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://iotexapi.com/api/transactions/0x123abc/receipt',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        json: true,
+      });
+
+      expect(result).toEqual([{ json: mockReceipt, pairedItem: { item: 0 } }]);
+    });
+  });
+});
+
+describe('Actions Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({
+        apiKey: 'test-api-key',
+        baseUrl: 'https://iotexapi.com',
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: {
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn(),
+      },
+    };
+  });
+
+  test('should get action by hash successfully', async () => {
+    const mockActionData = {
+      hash: 'test-hash',
+      blockHeight: 123456,
+      timestamp: '2023-01-01T00:00:00Z',
+    };
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getAction';
+      if (param === 'hash') return 'test-hash';
+      return null;
+    });
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockActionData);
+
+    const result = await executeActionsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockActionData);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/blocks/producers',
+      url: 'https://iotexapi.com/api/actions/test-hash',
       headers: {
         'Authorization': 'Bearer test-api-key',
         'Content-Type': 'application/json',
@@ -676,66 +653,145 @@ describe('Blocks Resource', () => {
     });
   });
 
-  test('should handle API errors', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlockByHeight';
-        case 'height':
-          return 99999999;
-        default:
-          return undefined;
-      }
+  test('should get actions list successfully', async () => {
+    const mockActionsData = {
+      actions: [
+        { hash: 'hash1', blockHeight: 123456 },
+        { hash: 'hash2', blockHeight: 123457 },
+      ],
+      total: 2,
+    };
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getActions';
+      if (param === 'limit') return 10;
+      if (param === 'offset') return 0;
+      if (param === 'address') return 'test-address';
+      return null;
     });
 
-    const apiError = new Error('Block not found');
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(apiError);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockActionsData);
 
-    const items = [{ json: {} }];
+    const result = await executeActionsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
 
-    await expect(
-      executeBlocksOperations.call(mockExecuteFunctions, items)
-    ).rejects.toThrow('Block not found');
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockActionsData);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://iotexapi.com/api/actions?limit=10&offset=0&address=test-address',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      json: true,
+    });
   });
 
-  test('should handle missing block hash parameter', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlockByHash';
-        case 'hash':
-          return '';
-        default:
-          return undefined;
-      }
+  test('should send action successfully', async () => {
+    const mockActionData = { type: 'transfer', amount: '1000' };
+    const mockResponse = { txHash: 'new-tx-hash', success: true };
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'sendAction';
+      if (param === 'action') return mockActionData;
+      return null;
     });
 
-    const items = [{ json: {} }];
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-    await expect(
-      executeBlocksOperations.call(mockExecuteFunctions, items)
-    ).rejects.toThrow('Block hash is required');
+    const result = await executeActionsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://iotexapi.com/api/actions',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      body: mockActionData,
+      json: true,
+    });
   });
 
-  test('should handle count limit validation', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBlocks';
-        case 'start':
-          return 1;
-        case 'count':
-          return 150;
-        default:
-          return undefined;
-      }
+  test('should get action receipt successfully', async () => {
+    const mockReceiptData = {
+      hash: 'test-hash',
+      status: 'success',
+      gasUsed: '21000',
+    };
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getActionReceipt';
+      if (param === 'hash') return 'test-hash';
+      return null;
     });
 
-    const items = [{ json: {} }];
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockReceiptData);
 
-    await expect(
-      executeBlocksOperations.call(mockExecuteFunctions, items)
-    ).rejects.toThrow('Count cannot exceed 100');
+    const result = await executeActionsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockReceiptData);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://iotexapi.com/api/actions/test-hash/receipt',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      json: true,
+    });
+  });
+
+  test('should handle API errors gracefully', async () => {
+    const mockError = new Error('API Error');
+    (mockError as any).httpCode = 404;
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getAction';
+      if (param === 'hash') return 'invalid-hash';
+      return null;
+    });
+
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+
+    await expect(executeActionsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    )).rejects.toThrow('API Error');
+  });
+
+  test('should continue on fail when configured', async () => {
+    const mockError = new Error('Network Error');
+    
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getAction';
+      if (param === 'hash') return 'test-hash';
+      return null;
+    });
+
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+
+    const result = await executeActionsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual({ error: 'Network Error' });
+    expect(result[0].pairedItem).toEqual({ item: 0 });
   });
 });
 
@@ -759,201 +815,209 @@ describe('SmartContracts Resource', () => {
     };
   });
 
-  describe('readContractStorage', () => {
-    it('should read contract storage successfully', async () => {
-      const mockResponse = { data: 'storage_value' };
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation':
-            return 'readContractStorage';
-          case 'address':
-            return 'io1234567890abcdef';
-          case 'key':
-            return 'storage_key';
-          default:
-            return '';
+  describe('callContract operation', () => {
+    it('should call contract successfully', async () => {
+      const mockResponse = {
+        success: true,
+        result: '0x123',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        switch (param) {
+          case 'operation': return 'callContract';
+          case 'contractAddress': return '0xabcd1234';
+          case 'method': return 'balanceOf';
+          case 'params': return '["0x5678"]';
+          default: return '';
         }
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
       const result = await executeSmartContractsOperations.call(
         mockExecuteFunctions,
-        [{ json: {} }],
+        [{ json: {} }]
       );
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 }
+        }
+      ]);
+
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'POST',
-        url: 'https://iotexapi.com/api/contracts/read',
+        url: 'https://iotexapi.com/api/contracts/call',
         headers: {
+          'Authorization': 'Bearer test-api-key',
           'Content-Type': 'application/json',
-          'X-API-Key': 'test-api-key',
         },
         body: {
-          address: 'io1234567890abcdef',
-          key: 'storage_key',
+          contractAddress: '0xabcd1234',
+          method: 'balanceOf',
+          params: ['0x5678'],
+        },
+        json: true,
+      });
+    });
+
+    it('should handle invalid JSON params', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        switch (param) {
+          case 'operation': return 'callContract';
+          case 'contractAddress': return '0xabcd1234';
+          case 'method': return 'balanceOf';
+          case 'params': return 'invalid-json';
+          default: return '';
+        }
+      });
+
+      await expect(
+        executeSmartContractsOperations.call(mockExecuteFunctions, [{ json: {} }])
+      ).rejects.toThrow('Invalid JSON in params parameter');
+    });
+  });
+
+  describe('executeContract operation', () => {
+    it('should execute contract successfully', async () => {
+      const mockResponse = {
+        success: true,
+        transactionHash: '0xabc123',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        switch (param) {
+          case 'operation': return 'executeContract';
+          case 'contractAddress': return '0xabcd1234';
+          case 'method': return 'transfer';
+          case 'params': return '["0x5678", "100"]';
+          case 'gasLimit': return 500000;
+          default: return '';
+        }
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
+
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 }
+        }
+      ]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: 'https://iotexapi.com/api/contracts/execute',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        body: {
+          contractAddress: '0xabcd1234',
+          method: 'transfer',
+          params: ['0x5678', '100'],
+          gasLimit: 500000,
         },
         json: true,
       });
     });
   });
 
-  describe('readState', () => {
-    it('should execute read-only contract call successfully', async () => {
-      const mockResponse = { result: 'call_result' };
-      const mockAction = { method: 'balanceOf', params: ['address'] };
-      
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation':
-            return 'readState';
-          case 'action':
-            return mockAction;
-          default:
-            return '';
-        }
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeSmartContractsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-
-  describe('getContract', () => {
+  describe('getContract operation', () => {
     it('should get contract information successfully', async () => {
-      const mockResponse = { contract: { address: 'io1234567890abcdef', abi: [] } };
-      
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation':
-            return 'getContract';
-          case 'address':
-            return 'io1234567890abcdef';
-          default:
-            return '';
+      const mockResponse = {
+        address: '0xabcd1234',
+        name: 'TestContract',
+        bytecode: '0x608060405234801561001057600080fd5b50',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        switch (param) {
+          case 'operation': return 'getContract';
+          case 'address': return '0xabcd1234';
+          default: return '';
         }
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
       const result = await executeSmartContractsOperations.call(
         mockExecuteFunctions,
-        [{ json: {} }],
+        [{ json: {} }]
       );
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 }
+        }
+      ]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://iotexapi.com/api/contracts/0xabcd1234',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+        },
+        json: true,
+      });
     });
   });
 
-  describe('estimateGas', () => {
-    it('should estimate gas for contract call successfully', async () => {
-      const mockResponse = { gasEstimate: '21000' };
-      const mockAction = { method: 'transfer', params: ['address', '1000'] };
-      
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation':
-            return 'estimateGas';
-          case 'action':
-            return mockAction;
-          default:
-            return '';
+  describe('getContractABI operation', () => {
+    it('should get contract ABI successfully', async () => {
+      const mockResponse = {
+        abi: [
+          {
+            name: 'balanceOf',
+            type: 'function',
+            inputs: [{ name: 'account', type: 'address' }],
+            outputs: [{ name: '', type: 'uint256' }],
+          },
+        ],
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        switch (param) {
+          case 'operation': return 'getContractABI';
+          case 'address': return '0xabcd1234';
+          default: return '';
         }
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
       const result = await executeSmartContractsOperations.call(
         mockExecuteFunctions,
-        [{ json: {} }],
+        [{ json: {} }]
       );
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-
-  describe('getActions', () => {
-    it('should get contract actions successfully', async () => {
-      const mockResponse = { actions: [], totalCount: 0 };
-      
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
-        switch (paramName) {
-          case 'operation':
-            return 'getActions';
-          case 'address':
-            return 'io1234567890abcdef';
-          case 'start':
-            return defaultValue !== undefined ? defaultValue : 0;
-          case 'count':
-            return defaultValue !== undefined ? defaultValue : 10;
-          default:
-            return '';
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 }
         }
+      ]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://iotexapi.com/api/contracts/0xabcd1234/abi',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+        },
+        json: true,
       });
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeSmartContractsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-
-  describe('error handling', () => {
-    it('should handle API errors correctly', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation':
-            return 'getContract';
-          case 'address':
-            return 'invalid_address';
-          default:
-            return '';
-        }
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Invalid address'));
-
-      await expect(
-        executeSmartContractsOperations.call(mockExecuteFunctions, [{ json: {} }]),
-      ).rejects.toThrow('Invalid address');
-    });
-
-    it('should continue on fail when configured', async () => {
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation':
-            return 'getContract';
-          case 'address':
-            return 'invalid_address';
-          default:
-            return '';
-        }
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Invalid address'));
-
-      const result = await executeSmartContractsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }],
-      );
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual({ error: 'Invalid address' });
     });
   });
 });
 
-describe('Rewards Resource', () => {
+describe('Delegates Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
@@ -973,245 +1037,172 @@ describe('Rewards Resource', () => {
     };
   });
 
-  test('should get epoch rewards successfully', async () => {
+  test('should get delegates successfully', async () => {
     const mockResponse = {
-      address: 'io1234567890abcdef',
-      epochNumber: 100,
-      blockReward: '1000000000000000000',
-      epochReward: '2000000000000000000',
-      foundationBonus: '500000000000000000',
+      delegates: [
+        { name: 'delegate1', votes: '1000000' },
+        { name: 'delegate2', votes: '2000000' }
+      ]
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getEpochRewards';
-        case 'address':
-          return 'io1234567890abcdef';
-        case 'epochNum':
-          return 100;
-        default:
-          return undefined;
-      }
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getDelegates';
+      if (param === 'limit') return 50;
+      if (param === 'offset') return 0;
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-    const result = await executeRewardsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockResponse);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/rewards/io1234567890abcdef?epochNum=100',
+      url: 'https://iotexapi.com/api/delegates',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      qs: {
+        limit: 50,
+        offset: 0,
       },
       json: true,
     });
   });
 
-  test('should get unclaimed balance successfully', async () => {
+  test('should get delegate by name successfully', async () => {
     const mockResponse = {
-      address: 'io1234567890abcdef',
-      unclaimedBalance: '5000000000000000000',
-      availableBalance: '3000000000000000000',
+      name: 'test-delegate',
+      votes: '5000000',
+      rank: 1
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getUnclaimedBalance';
-        case 'address':
-          return 'io1234567890abcdef';
-        case 'epochNum':
-          return 0;
-        default:
-          return undefined;
-      }
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getDelegate';
+      if (param === 'name') return 'test-delegate';
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-    const result = await executeRewardsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockResponse);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/rewards/unclaimed/io1234567890abcdef',
+      url: 'https://iotexapi.com/api/delegates/test-delegate',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
       },
       json: true,
     });
   });
 
-  test('should get buckets by voter successfully', async () => {
+  test('should get delegate votes successfully', async () => {
     const mockResponse = {
-      buckets: [
-        {
-          index: 1,
-          candidateName: 'delegate1',
-          stakedAmount: '10000000000000000000',
-          stakedDuration: 91,
-          autoStake: true,
-        },
-        {
-          index: 2,
-          candidateName: 'delegate2',
-          stakedAmount: '5000000000000000000',
-          stakedDuration: 365,
-          autoStake: false,
-        },
-      ],
-      total: 2,
+      votes: [
+        { voter: 'voter1', amount: '100000' },
+        { voter: 'voter2', amount: '200000' }
+      ]
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getBucketsByVoter';
-        case 'voterAddress':
-          return 'io1234567890abcdef';
-        case 'offset':
-          return 0;
-        case 'limit':
-          return 100;
-        default:
-          return undefined;
-      }
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getDelegateVotes';
+      if (param === 'name') return 'test-delegate';
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-    const result = await executeRewardsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockResponse);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/rewards/buckets/io1234567890abcdef',
+      url: 'https://iotexapi.com/api/delegates/test-delegate/votes',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
       },
       json: true,
     });
   });
 
-  test('should get candidates successfully', async () => {
+  test('should get delegate rankings successfully', async () => {
     const mockResponse = {
-      candidates: [
-        {
-          name: 'delegate1',
-          address: 'io1delegate1address',
-          totalWeightedVotes: '50000000000000000000',
-          selfStakingTokens: '1200000000000000000000',
-          operatorAddress: 'io1operator1address',
-        },
-        {
-          name: 'delegate2',
-          address: 'io1delegate2address',
-          totalWeightedVotes: '45000000000000000000',
-          selfStakingTokens: '1100000000000000000000',
-          operatorAddress: 'io1operator2address',
-        },
-      ],
-      total: 2,
+      rankings: [
+        { rank: 1, name: 'delegate1', votes: '10000000' },
+        { rank: 2, name: 'delegate2', votes: '9000000' }
+      ]
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getCandidates';
-        case 'height':
-          return 1000000;
-        case 'startIndex':
-          return 0;
-        case 'limit':
-          return 50;
-        default:
-          return undefined;
-      }
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getDelegateRankings';
+      if (param === 'limit') return 50;
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-    const result = await executeRewardsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json).toEqual(mockResponse);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://iotexapi.com/api/rewards/candidates?height=1000000&limit=50',
+      url: 'https://iotexapi.com/api/delegates/rankings',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      qs: {
+        limit: 50,
       },
       json: true,
     });
   });
 
   test('should handle API errors', async () => {
-    const mockError = {
-      response: {
-        statusCode: 404,
-        body: {
-          message: 'Address not found',
-        },
-      },
-    };
+    const mockError = new Error('API Error');
+    (mockError as any).httpCode = 404;
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getEpochRewards';
-        case 'address':
-          return 'invalid_address';
-        case 'epochNum':
-          return 0;
-        default:
-          return undefined;
-      }
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getDelegates';
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
 
     await expect(
-      executeRewardsOperations.call(mockExecuteFunctions, [{ json: {} }])
-    ).rejects.toThrow();
+      executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('API Error');
   });
 
-  test('should continue on fail when configured', async () => {
-    const mockError = new Error('Network error');
-    
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation':
-          return 'getEpochRewards';
-        case 'address':
-          return 'io1234567890abcdef';
-        case 'epochNum':
-          return 0;
-        default:
-          return undefined;
-      }
+  test('should continue on fail when enabled', async () => {
+    const mockError = new Error('Network Error');
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getDelegates';
+      return undefined;
     });
 
     mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-    const result = await executeRewardsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'Network error' });
+    expect(result[0].json).toEqual({ error: 'Network Error' });
   });
 });
 
-describe('Analytics Resource', () => {
+describe('Staking Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
@@ -1231,28 +1222,39 @@ describe('Analytics Resource', () => {
     };
   });
 
-  describe('getChainStats', () => {
-    it('should get chain statistics successfully', async () => {
+  describe('getStakingBuckets', () => {
+    it('should get staking buckets successfully', async () => {
       const mockResponse = {
-        height: 21000000,
-        supply: '9000000000',
-        transfers: 500000,
-        votes: 200000,
+        buckets: [
+          { id: '1', amount: '1000', voter: '0x123...', candidate: '0x456...', duration: 91 },
+          { id: '2', amount: '2000', voter: '0x789...', candidate: '0xabc...', duration: 182 }
+        ],
+        total: 2
       };
 
       mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getChainStats';
-        return undefined;
+        switch (param) {
+          case 'operation':
+            return 'getStakingBuckets';
+          case 'limit':
+            return 100;
+          case 'offset':
+            return 0;
+          case 'voter':
+            return '';
+          default:
+            return null;
+        }
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'GET',
-        url: 'https://iotexapi.com/api/stats/chain',
+        url: 'https://iotexapi.com/api/staking/buckets?limit=100&offset=0',
         headers: {
           'Authorization': 'Bearer test-api-key',
           'Content-Type': 'application/json',
@@ -1261,161 +1263,345 @@ describe('Analytics Resource', () => {
       });
     });
 
-    it('should handle chain stats error', async () => {
+    it('should handle error when getting staking buckets fails', async () => {
       mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getChainStats';
+        if (param === 'operation') return 'getStakingBuckets';
+        return param === 'limit' ? 100 : param === 'offset' ? 0 : '';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
+    });
+  });
+
+  describe('getStakingBucket', () => {
+    it('should get staking bucket by ID successfully', async () => {
+      const mockResponse = {
+        id: '12345',
+        amount: '1000',
+        voter: '0x123...',
+        candidate: '0x456...',
+        duration: 91,
+        createdAt: '2024-01-01T00:00:00Z'
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        return param === 'operation' ? 'getStakingBucket' : param === 'id' ? '12345' : null;
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://iotexapi.com/api/staking/buckets/12345',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        json: true,
+      });
+    });
+  });
+
+  describe('createStake', () => {
+    it('should create stake successfully', async () => {
+      const mockResponse = {
+        transactionHash: '0xabc123...',
+        bucketId: '67890',
+        status: 'pending'
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        switch (param) {
+          case 'operation':
+            return 'createStake';
+          case 'amount':
+            return '1000';
+          case 'candidate':
+            return '0x456...';
+          case 'duration':
+            return 91;
+          default:
+            return null;
+        }
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: 'https://iotexapi.com/api/staking/stake',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        json: true,
+        body: {
+          amount: '1000',
+          candidate: '0x456...',
+          duration: 91,
+        },
+      });
+    });
+  });
+
+  describe('unstake', () => {
+    it('should unstake successfully', async () => {
+      const mockResponse = {
+        transactionHash: '0xdef456...',
+        bucketId: '12345',
+        status: 'pending'
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        return param === 'operation' ? 'unstake' : param === 'bucketId' ? '12345' : null;
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: 'https://iotexapi.com/api/staking/unstake',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
+        },
+        json: true,
+        body: {
+          bucketId: '12345',
+        },
+      });
+    });
+  });
+});
+
+describe('ChainMetadata Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({
+        apiKey: 'test-api-key',
+        baseUrl: 'https://iotexapi.com',
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: {
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn(),
+      },
+    };
+  });
+
+  describe('getChainMetadata', () => {
+    it('should get chain metadata successfully', async () => {
+      const mockResponse = {
+        chainId: 4689,
+        networkName: 'IoTeX Mainnet',
+        blockTime: 5,
+        consensusScheme: 'RPOS',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getChainMetadata';
+        return undefined;
+      });
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeChainMetadataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
+
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 },
+        },
+      ]);
+    });
+
+    it('should handle getChainMetadata error', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getChainMetadata';
         return undefined;
       });
       mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
       await expect(
-        executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }])
+        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
       ).rejects.toThrow('API Error');
     });
   });
 
-  describe('getConsensusMetrics', () => {
-    it('should get consensus metrics successfully', async () => {
+  describe('getChainStats', () => {
+    it('should get chain statistics successfully', async () => {
       const mockResponse = {
-        totalDelegates: 36,
-        activeDelegates: 24,
-        consensusMetrics: {
-          blockTime: 5,
-          tps: 1000,
-        },
+        totalBlocks: 1000000,
+        totalTransactions: 5000000,
+        totalAccounts: 250000,
+        tps: 100,
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getConsensusMetrics';
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getChainStats';
         return undefined;
       });
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeChainMetadataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/stats/consensus',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 },
         },
-        json: true,
-      });
-    });
-  });
-
-  describe('getActionStats', () => {
-    it('should get action statistics successfully', async () => {
-      const mockResponse = {
-        totalActions: 1000000,
-        actionsByType: {
-          transfer: 600000,
-          execution: 300000,
-          staking: 100000,
-        },
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getActionStats';
-        return undefined;
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/stats/actions',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('getActiveAccounts', () => {
-    it('should get active accounts successfully', async () => {
-      const mockResponse = {
-        epochNum: 12345,
-        activeAccounts: 50000,
-        newAccounts: 1000,
-        totalAccounts: 500000,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string, index: number) => {
-        if (param === 'operation') return 'getActiveAccounts';
-        if (param === 'epochNum') return 12345;
-        return undefined;
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/stats/accounts',
-        qs: {
-          epochNum: 12345,
-        },
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
+      ]);
     });
 
-    it('should handle active accounts error with continue on fail', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string, index: number) => {
-        if (param === 'operation') return 'getActiveAccounts';
-        if (param === 'epochNum') return 12345;
+    it('should handle getChainStats error', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getChainStats';
         return undefined;
       });
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network Error'));
-
-      const result = await executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual({ error: 'Network Error' });
-    });
-  });
-
-  describe('error handling', () => {
-    it('should throw error for unknown operation', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'unknownOperation';
-        return undefined;
-      });
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Stats API Error'));
 
       await expect(
-        executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Unknown operation: unknownOperation');
+        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
+      ).rejects.toThrow('Stats API Error');
     });
+  });
 
-    it('should handle 401 authentication error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getChainStats';
+  describe('getNetworkInfo', () => {
+    it('should get network information successfully', async () => {
+      const mockResponse = {
+        networkId: 4689,
+        protocolVersion: '1.0.0',
+        nodeCount: 100,
+        peers: 50,
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getNetworkInfo';
         return undefined;
       });
-      
-      const authError = new Error('Unauthorized');
-      (authError as any).httpCode = 401;
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(authError);
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeChainMetadataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
+
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 },
+        },
+      ]);
+    });
+
+    it('should handle getNetworkInfo error', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getNetworkInfo';
+        return undefined;
+      });
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network API Error'));
 
       await expect(
-        executeAnalyticsOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow();
+        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
+      ).rejects.toThrow('Network API Error');
     });
+  });
+
+  describe('getCurrentEpoch', () => {
+    it('should get current epoch information successfully', async () => {
+      const mockResponse = {
+        epochNumber: 12345,
+        height: 1000000,
+        gravityChainStartHeight: 999950,
+        validators: 36,
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getCurrentEpoch';
+        return undefined;
+      });
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeChainMetadataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
+
+      expect(result).toEqual([
+        {
+          json: mockResponse,
+          pairedItem: { item: 0 },
+        },
+      ]);
+    });
+
+    it('should handle getCurrentEpoch error', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getCurrentEpoch';
+        return undefined;
+      });
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Epoch API Error'));
+
+      await expect(
+        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
+      ).rejects.toThrow('Epoch API Error');
+    });
+  });
+
+  it('should handle unknown operation', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'unknownOperation';
+      return undefined;
+    });
+
+    await expect(
+      executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('Unknown operation: unknownOperation');
+  });
+
+  it('should continue on fail when continueOnFail is true', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      if (paramName === 'operation') return 'getChainMetadata';
+      return undefined;
+    });
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+    const result = await executeChainMetadataOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toEqual([
+      {
+        json: { error: 'API Error' },
+        pairedItem: { item: 0 },
+      },
+    ]);
   });
 });
 });

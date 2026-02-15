@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-This n8n community node provides comprehensive integration with IoTeX, the blockchain platform for the Internet of Trusted Things. Access 6 core resources including Accounts, Actions, Blocks, Smart Contracts, Rewards, and Analytics to build powerful IoT and blockchain automation workflows.
+This n8n community node provides comprehensive integration with the IoTeX blockchain network, offering access to 8 core resources including accounts, blocks, transactions, actions, smart contracts, delegates, staking operations, and chain metadata for building powerful IoT and Web3 automation workflows.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![IoTeX](https://img.shields.io/badge/IoTeX-Blockchain-green)
-![IoT](https://img.shields.io/badge/IoT-Ready-orange)
-![DeFi](https://img.shields.io/badge/DeFi-Compatible-purple)
+![IoTeX](https://img.shields.io/badge/IoTeX-Compatible-green)
+![Web3](https://img.shields.io/badge/Web3-Enabled-purple)
+![Blockchain](https://img.shields.io/badge/Blockchain-IoT-orange)
 
 ## Features
 
-- **Account Management** - Query account balances, transaction history, and nonce information
-- **Action Tracking** - Monitor and analyze blockchain actions with detailed filtering options
-- **Block Operations** - Access block data, metadata, and transaction details from the IoTeX blockchain
-- **Smart Contract Integration** - Deploy, execute, and query smart contracts on the IoTeX network
-- **Rewards Analytics** - Track staking rewards, voting rewards, and delegation information
-- **Network Analytics** - Monitor network statistics, validator performance, and ecosystem metrics
-- **Real-time Data** - Access live blockchain data with automatic retry and error handling
-- **Flexible Authentication** - Secure API key-based authentication with multiple endpoint support
+- **Account Management** - Query account balances, transaction history, and smart contract interactions
+- **Block & Transaction Data** - Access complete blockchain data including block details and transaction analysis
+- **Smart Contract Integration** - Deploy, interact with, and monitor smart contracts on IoTeX network
+- **Delegate Operations** - Manage delegate information, voting records, and governance participation  
+- **Staking Management** - Handle staking operations, rewards tracking, and validator interactions
+- **Chain Metadata** - Access network statistics, protocol information, and blockchain metrics
+- **Action Monitoring** - Track and analyze all types of blockchain actions and events
+- **Real-time Updates** - Get live blockchain data for automation and monitoring workflows
 
 ## Installation
 
@@ -61,9 +61,9 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your IoTeX API key for authentication | Yes |
-| Base URL | IoTeX API base URL (defaults to mainnet) | No |
-| Network | Network selection (mainnet/testnet) | No |
+| API Key | IoTeX API key for authenticated requests | Yes |
+| Network | Target network (mainnet, testnet) | Yes |
+| Endpoint URL | Custom RPC endpoint (optional) | No |
 
 ## Resources & Operations
 
@@ -72,112 +72,139 @@ n8n start
 | Operation | Description |
 |-----------|-------------|
 | Get Account | Retrieve account information including balance and nonce |
-| Get Account Actions | Fetch all actions associated with an account |
-| Get Account Metadata | Get extended account metadata and properties |
-| List Accounts | Query multiple accounts with filtering options |
+| Get Account Actions | Fetch all actions performed by an account |
+| Get Account Metadata | Get detailed account metadata and contract information |
 
-### 2. Actions
-
-| Operation | Description |
-|-----------|-------------|
-| Get Action | Retrieve detailed information about a specific action |
-| Get Actions by Hash | Fetch actions using transaction hash |
-| Get Actions by Block | Get all actions within a specific block |
-| Get Actions by Address | Query actions filtered by address |
-| Get Action Receipt | Retrieve execution receipt for an action |
-
-### 3. Blocks
+### 2. Blocks
 
 | Operation | Description |
 |-----------|-------------|
-| Get Block | Fetch block information by height or hash |
-| Get Block Metadata | Retrieve block metadata and statistics |
-| Get Latest Block | Get the most recent block information |
-| Get Block Range | Query multiple blocks within a height range |
-| Get Block Actions | List all actions within a specific block |
+| Get Block by Height | Retrieve block data by block height |
+| Get Block by Hash | Fetch block information using block hash |
+| Get Latest Block | Get the most recent block on the chain |
+| Get Block Range | Retrieve multiple blocks within a specified range |
 
-### 4. Smart Contracts
+### 3. Transactions
 
 | Operation | Description |
 |-----------|-------------|
-| Deploy Contract | Deploy a new smart contract to the IoTeX network |
+| Get Transaction | Fetch transaction details by transaction hash |
+| Get Transaction Receipt | Retrieve transaction execution receipt |
+| Send Transaction | Broadcast a signed transaction to the network |
+| Estimate Gas | Calculate gas estimation for transaction execution |
+
+### 4. Actions
+
+| Operation | Description |
+|-----------|-------------|
+| Get Action by Hash | Retrieve action details using action hash |
+| Get Actions by Block | Fetch all actions within a specific block |
+| Get Actions by Address | Get actions associated with an address |
+| Search Actions | Search actions using various filters |
+
+### 5. SmartContracts
+
+| Operation | Description |
+|-----------|-------------|
+| Deploy Contract | Deploy a new smart contract to the network |
 | Call Contract | Execute a read-only contract function call |
-| Execute Contract | Send a transaction to execute contract function |
-| Get Contract Code | Retrieve contract bytecode and ABI |
-| Get Contract Events | Query contract event logs with filtering |
+| Send Contract Transaction | Execute a state-changing contract transaction |
+| Get Contract Code | Retrieve the bytecode of a deployed contract |
+| Get Contract ABI | Fetch the ABI of a verified contract |
 
-### 5. Rewards
-
-| Operation | Description |
-|-----------|-------------|
-| Get Staking Rewards | Retrieve staking reward information |
-| Get Voting Rewards | Fetch voting reward details |
-| Get Delegate Rewards | Query delegate reward distribution |
-| Get Reward History | Get historical reward data with date ranges |
-| Calculate Rewards | Estimate potential rewards for staking amounts |
-
-### 6. Analytics
+### 6. Delegates
 
 | Operation | Description |
 |-----------|-------------|
-| Get Network Stats | Retrieve overall network statistics |
-| Get Validator Analytics | Analyze validator performance metrics |
-| Get Token Analytics | Query token distribution and usage statistics |
-| Get Transaction Volume | Monitor transaction volume and trends |
-| Get Active Addresses | Track active address metrics over time |
+| Get Delegates | Retrieve list of all delegates |
+| Get Delegate by Name | Fetch specific delegate information |
+| Get Delegate Productivity | Get delegate block production statistics |
+| Get Delegate Rewards | Retrieve delegate reward information |
+
+### 7. Staking
+
+| Operation | Description |
+|-----------|-------------|
+| Get Buckets | Retrieve all staking buckets |
+| Get Bucket by Index | Fetch specific staking bucket details |
+| Create Stake | Create a new staking bucket |
+| Unstake | Withdraw stake from a bucket |
+| Restake | Extend or modify existing stake |
+
+### 8. ChainMetadata
+
+| Operation | Description |
+|-----------|-------------|
+| Get Chain Info | Retrieve basic blockchain information |
+| Get Server Meta | Get server and API metadata |
+| Get Epoch Meta | Fetch epoch-related metadata |
+| Get Node Info | Get network node information |
 
 ## Usage Examples
 
 ```javascript
-// Get account balance
-{
-  "address": "io1qyqsyqcy8uhx9jtdc2xp5wx7nxyq3xf4c3jmxknzkuej8y",
-  "operation": "getAccount"
-}
-```
-
-```javascript
-// Query recent actions
-{
-  "operation": "getActionsByAddress",
-  "address": "io1qyqsyqcy8uhx9jtdc2xp5wx7nxyq3xf4c3jmxknzkuej8y",
-  "start": 0,
-  "count": 50
-}
-```
-
-```javascript
-// Execute smart contract function
-{
-  "operation": "executeContract",
-  "contractAddress": "io1hp6y4eqr90j7tmul4w2wa8pm7wx462hq0mg4tw0ujql757y",
-  "function": "transfer",
-  "parameters": {
-    "to": "io1qyqsyqcy8uhx9jtdc2xp5wx7nxyq3xf4c3jmxknzkuej8y",
-    "amount": "1000000000000000000"
+// Get account balance and information
+const account = await this.helpers.httpRequest({
+  method: 'GET',
+  url: '/accounts/io1abc123...',
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`
   }
-}
+});
 ```
 
 ```javascript
-// Get network analytics
-{
-  "operation": "getNetworkStats",
-  "timeRange": "24h",
-  "includeValidators": true
-}
+// Retrieve latest block data
+const latestBlock = await this.helpers.httpRequest({
+  method: 'GET', 
+  url: '/blocks/latest',
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`
+  }
+});
+```
+
+```javascript
+// Call smart contract function
+const contractCall = await this.helpers.httpRequest({
+  method: 'POST',
+  url: '/contracts/call',
+  body: {
+    contractAddress: 'io1contract123...',
+    functionName: 'balanceOf',
+    parameters: ['io1user123...']
+  },
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`
+  }
+});
+```
+
+```javascript
+// Get delegate information
+const delegates = await this.helpers.httpRequest({
+  method: 'GET',
+  url: '/delegates',
+  qs: {
+    limit: 36,
+    offset: 0
+  },
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`
+  }
+});
 ```
 
 ## Error Handling
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| Invalid API Key | Authentication failed with provided credentials | Verify API key in credentials configuration |
-| Network Timeout | Request exceeded timeout limit | Check network connection and retry |
-| Invalid Address | Blockchain address format is incorrect | Validate address format (io1...) |
-| Contract Not Found | Smart contract address does not exist | Verify contract deployment and address |
-| Insufficient Balance | Account lacks funds for transaction | Check account balance before operations |
-| Rate Limit Exceeded | Too many requests sent to API | Implement delays between requests |
+| Authentication Failed | Invalid or missing API key | Verify API key in credentials settings |
+| Network Timeout | Request timed out | Check network connectivity and retry |
+| Invalid Address Format | Malformed IoTeX address | Ensure address follows io1... format |
+| Insufficient Gas | Transaction gas limit too low | Increase gas limit or estimate gas first |
+| Contract Not Found | Smart contract doesn't exist | Verify contract address and deployment |
+| Rate Limit Exceeded | Too many API requests | Implement request throttling or upgrade plan |
 
 ## Development
 
@@ -223,4 +250,4 @@ Contributions are welcome! Please ensure:
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-iotex/issues)
 - **IoTeX Documentation**: [IoTeX Developer Portal](https://docs.iotex.io/)
-- **IoTeX Community**: [IoTeX Discord](https://discord.gg/iotex)
+- **IoTeX Community**: [IoTeX Discord](https://discord.com/invite/iotex)

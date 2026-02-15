@@ -1,87 +1,52 @@
 {
   "name": "n8n-nodes-iotex",
   "version": "1.0.0",
-  "description": "n8n community nodes for the IoTeX blockchain - DePIN infrastructure for machine economy",
-  "keywords": [
-    "n8n-community-node-package",
-    "n8n",
-    "iotex",
-    "blockchain",
-    "depin",
-    "iot",
-    "machinefi",
-    "w3bstream",
-    "pebble",
-    "web3",
-    "cryptocurrency",
-    "smart-contracts",
-    "xrc20",
-    "xrc721"
-  ],
-  "license": "BUSL-1.1",
-  "author": {
-    "name": "Velocity BPA",
-    "email": "licensing@velobpa.com",
-    "url": "https://velobpa.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Velocity-BPA/n8n-nodes-iotex.git"
-  },
-  "homepage": "https://github.com/Velocity-BPA/n8n-nodes-iotex#readme",
-  "bugs": {
-    "url": "https://github.com/Velocity-BPA/n8n-nodes-iotex/issues"
-  },
-  "engines": {
-    "node": ">=18.10",
-    "pnpm": ">=9.1"
-  },
-  "main": "dist/nodes/Iotex/Iotex.node.js",
+  "description": "n8n community node for IoTeX",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "main": "dist/nodes/IoTeX/IoTeX.node.js",
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
-    "lint:fix": "eslint nodes credentials package.json --fix",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "format": "prettier nodes credentials --write",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:integration": "RUN_INTEGRATION_TESTS=true jest test/integration",
     "prepublishOnly": "npm run build"
   },
   "files": [
-    "dist"
+    "dist/**/*"
   ],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/IotexNetwork.credentials.js",
-      "dist/credentials/IotexScan.credentials.js",
-      "dist/credentials/W3bstream.credentials.js"
-    ],
-    "nodes": [
-      "dist/nodes/Iotex/Iotex.node.js",
-      "dist/nodes/Iotex/IotexTrigger.node.js"
-    ]
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@9.1.4",
+  "dependencies": {
+    "axios": "^1.6.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.11",
-    "@types/node": "^20.10.0",
+    "@types/jest": "^29.5.5",
+    "@types/node": "^20.8.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "gulp": "^4.0.2",
+    "gulp-rename": "^2.0.0",
     "jest": "^29.7.0",
     "n8n-workflow": "*",
-    "prettier": "^3.1.0",
+    "prettier": "^3.0.3",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.3.0"
-  },
-  "dependencies": {
-    "axios": "^1.6.2",
-    "ethers": "^6.9.0"
+    "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
-  }
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "iotex",
+    "blockchain",
+    "crypto"
+  ]
 }

@@ -7,18 +7,15 @@ dist/
 # Environment variables
 .env
 .env.local
-.env.test
-
-# Testing
-coverage/
-*.test.js
-*.spec.js
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
 # Runtime data
 pids
@@ -26,8 +23,33 @@ pids
 *.seed
 *.pid.lock
 
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
 # Optional npm cache directory
 .npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
 
 # Optional REPL history
 .node_repl_history
@@ -38,17 +60,24 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
 
-# OS generated files
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Compiled JavaScript files (but keep config files)
+*.js
+!jest.config.js
+!gulpfile.js
+!.eslintrc.js
+!webpack.config.js

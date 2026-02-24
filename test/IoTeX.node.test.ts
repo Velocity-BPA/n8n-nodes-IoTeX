@@ -33,20 +33,20 @@ describe('IoTeX Node', () => {
       expect(node.description.outputs).toContain('main');
     });
 
-    it('should define 8 resources', () => {
+    it('should define 6 resources', () => {
       const resourceProp = node.description.properties.find(
         (p: any) => p.name === 'resource'
       );
       expect(resourceProp).toBeDefined();
       expect(resourceProp!.type).toBe('options');
-      expect(resourceProp!.options).toHaveLength(8);
+      expect(resourceProp!.options).toHaveLength(6);
     });
 
     it('should have operation dropdowns for each resource', () => {
       const operations = node.description.properties.filter(
         (p: any) => p.name === 'operation'
       );
-      expect(operations.length).toBe(8);
+      expect(operations.length).toBe(6);
     });
 
     it('should require credentials', () => {
@@ -67,7 +67,7 @@ describe('IoTeX Node', () => {
   });
 
   // Resource-specific tests
-describe('Accounts Resource', () => {
+describe('BlockchainData Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
@@ -75,7 +75,7 @@ describe('Accounts Resource', () => {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
         apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
+        baseUrl: 'https://babel-api.mainnet.iotex.io',
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
@@ -87,711 +87,175 @@ describe('Accounts Resource', () => {
     };
   });
 
-  test('should get account details successfully', async () => {
-    const mockAccountData = {
-      address: 'io1test123',
-      balance: '1000000000000000000',
-      nonce: 10,
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getAccount';
-      if (paramName === 'address') return 'io1test123';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockAccountData);
-
-    const items = [{ json: {} }];
-    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockAccountData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/accounts/io1test123',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should get account balance successfully', async () => {
-    const mockBalanceData = {
-      balance: '1000000000000000000',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getBalance';
-      if (paramName === 'address') return 'io1test123';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBalanceData);
-
-    const items = [{ json: {} }];
-    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockBalanceData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/accounts/io1test123/balance',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should get account transactions with pagination', async () => {
-    const mockTransactionsData = {
-      transactions: [
-        { hash: 'tx1', amount: '100' },
-        { hash: 'tx2', amount: '200' },
-      ],
-      total: 2,
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
-      if (paramName === 'operation') return 'getAccountTransactions';
-      if (paramName === 'address') return 'io1test123';
-      if (paramName === 'limit') return 50;
-      if (paramName === 'offset') return 10;
-      return defaultValue;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransactionsData);
-
-    const items = [{ json: {} }];
-    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockTransactionsData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/accounts/io1test123/transactions',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      qs: {
-        limit: 50,
-        offset: 10,
-      },
-      json: true,
-    });
-  });
-
-  test('should get account actions with pagination', async () => {
-    const mockActionsData = {
-      actions: [
-        { actionHash: 'action1', actionType: 'transfer' },
-        { actionHash: 'action2', actionType: 'execution' },
-      ],
-      total: 2,
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
-      if (paramName === 'operation') return 'getAccountActions';
-      if (paramName === 'address') return 'io1test123';
-      if (paramName === 'limit') return 25;
-      if (paramName === 'offset') return 5;
-      return defaultValue;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockActionsData);
-
-    const items = [{ json: {} }];
-    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockActionsData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/accounts/io1test123/actions',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      qs: {
-        limit: 25,
-        offset: 5,
-      },
-      json: true,
-    });
-  });
-
-  test('should handle API errors', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getAccount';
-      if (paramName === 'address') return 'invalid-address';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue({
-      httpCode: 404,
-      message: 'Account not found',
-    });
-
-    const items = [{ json: {} }];
-
-    await expect(executeAccountsOperations.call(mockExecuteFunctions, items)).rejects.toThrow();
-  });
-
-  test('should continue on fail when configured', async () => {
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getAccount';
-      if (paramName === 'address') return 'invalid-address';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
-
-    const items = [{ json: {} }];
-    const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json.error).toBe('API Error');
-  });
-});
-
-describe('Blocks Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  test('should get block by height successfully', async () => {
-    const mockBlockData = {
-      height: 1000,
-      hash: '0x123abc',
-      timestamp: '2023-01-01T00:00:00Z',
-      transactions: [],
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getBlockByHeight';
-      if (paramName === 'height') return 1000;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockData);
-
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockBlockData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/blocks/1000',
-      headers: {
-        'X-API-Key': 'test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should get block by hash successfully', async () => {
-    const mockBlockData = {
-      height: 1000,
-      hash: '0x123abc',
-      timestamp: '2023-01-01T00:00:00Z',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getBlockByHash';
-      if (paramName === 'hash') return '0x123abc';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockData);
-
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockBlockData);
-  });
-
-  test('should get blocks list with pagination', async () => {
-    const mockBlocksData = {
-      blocks: [
-        { height: 1000, hash: '0x123' },
-        { height: 999, hash: '0x456' },
-      ],
-      total: 100,
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
-      if (paramName === 'operation') return 'getBlocks';
-      if (paramName === 'limit') return 10;
-      if (paramName === 'offset') return 0;
-      return defaultValue;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlocksData);
-
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockBlocksData);
-  });
-
-  test('should get latest block successfully', async () => {
-    const mockLatestBlock = {
-      height: 2000,
-      hash: '0xlatest',
-      timestamp: '2023-12-01T00:00:00Z',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getLatestBlock';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockLatestBlock);
-
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockLatestBlock);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/blocks/latest',
-      headers: {
-        'X-API-Key': 'test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should get block transactions successfully', async () => {
-    const mockTransactions = {
-      transactions: [
-        { hash: '0xtx1', type: 'transfer' },
-        { hash: '0xtx2', type: 'execution' },
-      ],
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getBlockTransactions';
-      if (paramName === 'height') return 1500;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransactions);
-
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockTransactions);
-  });
-
-  test('should handle API errors gracefully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getLatestBlock';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-
-    const result = await executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'API Error' });
-  });
-
-  test('should throw error for unknown operation', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'unknownOperation';
-      return undefined;
-    });
-
-    await expect(
-      executeBlocksOperations.call(mockExecuteFunctions, [{ json: {} }])
-    ).rejects.toThrow('Unknown operation: unknownOperation');
-  });
-});
-
-describe('Transactions Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  describe('getTransaction operation', () => {
-    it('should get transaction by hash successfully', async () => {
-      const mockTransaction = {
-        hash: '0x123abc',
-        from: '0xfrom',
-        to: '0xto',
-        value: '1000',
-        status: 'confirmed',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
-        if (paramName === 'operation') return 'getTransaction';
-        if (paramName === 'hash') return '0x123abc';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransaction);
-
-      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/transactions/0x123abc',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-
-      expect(result).toEqual([{ json: mockTransaction, pairedItem: { item: 0 } }]);
-    });
-
-    it('should handle error when getting transaction', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
-        if (paramName === 'operation') return 'getTransaction';
-        if (paramName === 'hash') return '0xinvalid';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Transaction not found'));
-
-      await expect(executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]))
-        .rejects.toThrow('Transaction not found');
-    });
-  });
-
-  describe('getTransactions operation', () => {
-    it('should get list of transactions with parameters', async () => {
-      const mockTransactions = {
-        transactions: [
-          { hash: '0x123', from: '0xfrom1', to: '0xto1' },
-          { hash: '0x456', from: '0xfrom2', to: '0xto2' },
-        ],
-        total: 2,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
-        if (paramName === 'operation') return 'getTransactions';
-        if (paramName === 'limit') return 10;
-        if (paramName === 'offset') return 0;
-        if (paramName === 'address') return '0xaddress';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransactions);
-
-      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/transactions?limit=10&offset=0&address=0xaddress',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-
-      expect(result).toEqual([{ json: mockTransactions, pairedItem: { item: 0 } }]);
-    });
-  });
-
-  describe('sendTransaction operation', () => {
-    it('should send transaction successfully', async () => {
+  describe('getChainMeta', () => {
+    it('should get chain metadata successfully', async () => {
       const mockResponse = {
-        txHash: '0x789def',
-        status: 'pending',
+        chainMeta: {
+          height: '12345',
+          numActions: '67890',
+          epoch: {
+            num: '100',
+            height: '12345',
+          },
+        },
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
-        if (paramName === 'operation') return 'sendTransaction';
-        if (paramName === 'signedTransaction') return '0xsignedtx';
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getChainMeta';
+        return {};
       });
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeBlockchainDataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
 
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'POST',
-        url: 'https://iotexapi.com/api/transactions',
+        url: 'https://babel-api.mainnet.iotex.io/api/core/getChainMeta',
         headers: {
-          'Authorization': 'Bearer test-api-key',
           'Content-Type': 'application/json',
+          'X-API-Key': 'test-api-key',
         },
-        body: {
-          signedTransaction: '0xsignedtx',
-        },
+        body: {},
         json: true,
       });
+    });
+  });
+
+  describe('getBlockMetas', () => {
+    it('should get block metadata by index successfully', async () => {
+      const mockResponse = {
+        blkMetas: [
+          {
+            hash: 'test-hash',
+            height: '100',
+            timestamp: '2023-01-01T00:00:00Z',
+          },
+        ],
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string, index: number, defaultValue?: any) => {
+        if (param === 'operation') return 'getBlockMetas';
+        if (param === 'byIndex') return { start: 100, count: 1 };
+        if (param === 'byHash') return '';
+        if (param === 'count') return 1;
+        return defaultValue;
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeBlockchainDataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
 
       expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
     });
   });
 
-  describe('getTransactionReceipt operation', () => {
-    it('should get transaction receipt successfully', async () => {
-      const mockReceipt = {
-        transactionHash: '0x123abc',
-        status: 1,
-        gasUsed: '21000',
-        logs: [],
+  describe('getAccount', () => {
+    it('should get account information successfully', async () => {
+      const mockResponse = {
+        accountMeta: {
+          address: 'io1test',
+          balance: '1000000000000000000',
+          nonce: '1',
+        },
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, itemIndex: number) => {
-        if (paramName === 'operation') return 'getTransactionReceipt';
-        if (paramName === 'hash') return '0x123abc';
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getAccount';
+        if (param === 'address') return 'io1test';
+        return '';
       });
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockReceipt);
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeTransactionsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeBlockchainDataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
 
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/transactions/0x123abc/receipt',
+        method: 'POST',
+        url: 'https://babel-api.mainnet.iotex.io/api/core/getAccount',
         headers: {
-          'Authorization': 'Bearer test-api-key',
           'Content-Type': 'application/json',
+          'X-API-Key': 'test-api-key',
+        },
+        body: {
+          address: 'io1test',
         },
         json: true,
       });
-
-      expect(result).toEqual([{ json: mockReceipt, pairedItem: { item: 0 } }]);
-    });
-  });
-});
-
-describe('Actions Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  test('should get action by hash successfully', async () => {
-    const mockActionData = {
-      hash: 'test-hash',
-      blockHeight: 123456,
-      timestamp: '2023-01-01T00:00:00Z',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getAction';
-      if (param === 'hash') return 'test-hash';
-      return null;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockActionData);
-
-    const result = await executeActionsOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockActionData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/actions/test-hash',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
     });
   });
 
-  test('should get actions list successfully', async () => {
-    const mockActionsData = {
-      actions: [
-        { hash: 'hash1', blockHeight: 123456 },
-        { hash: 'hash2', blockHeight: 123457 },
-      ],
-      total: 2,
-    };
+  describe('getReceiptByAction', () => {
+    it('should get transaction receipt successfully', async () => {
+      const mockResponse = {
+        receiptInfo: {
+          receipt: {
+            status: 1,
+            blkHeight: '12345',
+            gasConsumed: '10000',
+          },
+        },
+      };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getActions';
-      if (param === 'limit') return 10;
-      if (param === 'offset') return 0;
-      if (param === 'address') return 'test-address';
-      return null;
-    });
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getReceiptByAction';
+        if (param === 'actionHash') return 'test-action-hash';
+        return '';
+      });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockActionsData);
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-    const result = await executeActionsOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
+      const result = await executeBlockchainDataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockActionsData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/actions?limit=10&offset=0&address=test-address',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
+      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
     });
   });
 
-  test('should send action successfully', async () => {
-    const mockActionData = { type: 'transfer', amount: '1000' };
-    const mockResponse = { txHash: 'new-tx-hash', success: true };
+  describe('error handling', () => {
+    it('should handle API errors when continueOnFail is true', async () => {
+      const error = new Error('API Error');
+      
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getChainMeta';
+        return {};
+      });
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'sendAction';
-      if (param === 'action') return mockActionData;
-      return null;
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(error);
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+      const result = await executeBlockchainDataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
+
+      expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
     });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    it('should throw error for unknown operation', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'unknownOperation';
+        return {};
+      });
 
-    const result = await executeActionsOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://iotexapi.com/api/actions',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      body: mockActionData,
-      json: true,
+      await expect(executeBlockchainDataOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      )).rejects.toThrow('Unknown operation: unknownOperation');
     });
-  });
-
-  test('should get action receipt successfully', async () => {
-    const mockReceiptData = {
-      hash: 'test-hash',
-      status: 'success',
-      gasUsed: '21000',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getActionReceipt';
-      if (param === 'hash') return 'test-hash';
-      return null;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockReceiptData);
-
-    const result = await executeActionsOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockReceiptData);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/actions/test-hash/receipt',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should handle API errors gracefully', async () => {
-    const mockError = new Error('API Error');
-    (mockError as any).httpCode = 404;
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getAction';
-      if (param === 'hash') return 'invalid-hash';
-      return null;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
-
-    await expect(executeActionsOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    )).rejects.toThrow('API Error');
-  });
-
-  test('should continue on fail when configured', async () => {
-    const mockError = new Error('Network Error');
-    
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getAction';
-      if (param === 'hash') return 'test-hash';
-      return null;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
-
-    const result = await executeActionsOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'Network Error' });
-    expect(result[0].pairedItem).toEqual({ item: 0 });
   });
 });
 
@@ -803,7 +267,7 @@ describe('SmartContracts Resource', () => {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
         apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
+        baseUrl: 'https://babel-api.mainnet.iotex.io',
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
@@ -815,580 +279,249 @@ describe('SmartContracts Resource', () => {
     };
   });
 
-  describe('callContract operation', () => {
-    it('should call contract successfully', async () => {
-      const mockResponse = {
-        success: true,
-        result: '0x123',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'callContract';
-          case 'contractAddress': return '0xabcd1234';
-          case 'method': return 'balanceOf';
-          case 'params': return '["0x5678"]';
-          default: return '';
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeSmartContractsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
-
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 }
-        }
-      ]);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://iotexapi.com/api/contracts/call',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          contractAddress: '0xabcd1234',
-          method: 'balanceOf',
-          params: ['0x5678'],
-        },
-        json: true,
-      });
-    });
-
-    it('should handle invalid JSON params', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'callContract';
-          case 'contractAddress': return '0xabcd1234';
-          case 'method': return 'balanceOf';
-          case 'params': return 'invalid-json';
-          default: return '';
-        }
-      });
-
-      await expect(
-        executeSmartContractsOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Invalid JSON in params parameter');
-    });
-  });
-
-  describe('executeContract operation', () => {
-    it('should execute contract successfully', async () => {
-      const mockResponse = {
-        success: true,
-        transactionHash: '0xabc123',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'executeContract';
-          case 'contractAddress': return '0xabcd1234';
-          case 'method': return 'transfer';
-          case 'params': return '["0x5678", "100"]';
-          case 'gasLimit': return 500000;
-          default: return '';
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeSmartContractsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
-
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 }
-        }
-      ]);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://iotexapi.com/api/contracts/execute',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          contractAddress: '0xabcd1234',
-          method: 'transfer',
-          params: ['0x5678', '100'],
-          gasLimit: 500000,
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('getContract operation', () => {
-    it('should get contract information successfully', async () => {
-      const mockResponse = {
-        address: '0xabcd1234',
-        name: 'TestContract',
-        bytecode: '0x608060405234801561001057600080fd5b50',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getContract';
-          case 'address': return '0xabcd1234';
-          default: return '';
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeSmartContractsOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
-
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 }
-        }
-      ]);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/contracts/0xabcd1234',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('getContractABI operation', () => {
-    it('should get contract ABI successfully', async () => {
-      const mockResponse = {
-        abi: [
-          {
-            name: 'balanceOf',
-            type: 'function',
-            inputs: [{ name: 'account', type: 'address' }],
-            outputs: [{ name: '', type: 'uint256' }],
+  describe('sendAction', () => {
+    it('should successfully send action to blockchain', async () => {
+      const mockAction = {
+        core: {
+          version: 1,
+          nonce: '1',
+          gasLimit: '10000',
+          gasPrice: '1000000000000',
+          execution: {
+            contract: 'io1hp6y4eqr90j7tmul4w2wa8pm7wx462hq0mg4tw',
+            amount: '0',
+            data: '0x123456',
           },
-        ],
+        },
+        senderPubKey: '04abc123',
+        signature: '0xdef456',
+      };
+      
+      const mockResponse = {
+        actionHash: '0x123abc456def',
+        success: true,
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getContractABI';
-          case 'address': return '0xabcd1234';
-          default: return '';
-        }
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'sendAction';
+        if (paramName === 'action') return mockAction;
+        return '';
       });
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
       const result = await executeSmartContractsOperations.call(
         mockExecuteFunctions,
-        [{ json: {} }]
+        [{ json: {} }],
       );
 
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 }
-        }
-      ]);
-
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/contracts/0xabcd1234/abi',
+        method: 'POST',
+        url: 'https://babel-api.mainnet.iotex.io/api/core/sendAction',
         headers: {
-          'Authorization': 'Bearer test-api-key',
+          'X-API-KEY': 'test-api-key',
+          'Content-Type': 'application/json',
         },
+        body: { action: mockAction },
         json: true,
       });
     });
   });
-});
 
-describe('Delegates Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  test('should get delegates successfully', async () => {
-    const mockResponse = {
-      delegates: [
-        { name: 'delegate1', votes: '1000000' },
-        { name: 'delegate2', votes: '2000000' }
-      ]
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDelegates';
-      if (param === 'limit') return 50;
-      if (param === 'offset') return 0;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/delegates',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      qs: {
-        limit: 50,
-        offset: 0,
-      },
-      json: true,
-    });
-  });
-
-  test('should get delegate by name successfully', async () => {
-    const mockResponse = {
-      name: 'test-delegate',
-      votes: '5000000',
-      rank: 1
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDelegate';
-      if (param === 'name') return 'test-delegate';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/delegates/test-delegate',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should get delegate votes successfully', async () => {
-    const mockResponse = {
-      votes: [
-        { voter: 'voter1', amount: '100000' },
-        { voter: 'voter2', amount: '200000' }
-      ]
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDelegateVotes';
-      if (param === 'name') return 'test-delegate';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/delegates/test-delegate/votes',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should get delegate rankings successfully', async () => {
-    const mockResponse = {
-      rankings: [
-        { rank: 1, name: 'delegate1', votes: '10000000' },
-        { rank: 2, name: 'delegate2', votes: '9000000' }
-      ]
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDelegateRankings';
-      if (param === 'limit') return 50;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://iotexapi.com/api/delegates/rankings',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      qs: {
-        limit: 50,
-      },
-      json: true,
-    });
-  });
-
-  test('should handle API errors', async () => {
-    const mockError = new Error('API Error');
-    (mockError as any).httpCode = 404;
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDelegates';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
-
-    await expect(
-      executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }])
-    ).rejects.toThrow('API Error');
-  });
-
-  test('should continue on fail when enabled', async () => {
-    const mockError = new Error('Network Error');
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDelegates';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-
-    const result = await executeDelegatesOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'Network Error' });
-  });
-});
-
-describe('Staking Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  describe('getStakingBuckets', () => {
-    it('should get staking buckets successfully', async () => {
+  describe('estimateGasForAction', () => {
+    it('should successfully estimate gas for action', async () => {
+      const mockAction = {
+        core: {
+          execution: {
+            contract: 'io1hp6y4eqr90j7tmul4w2wa8pm7wx462hq0mg4tw',
+            amount: '0',
+            data: '0x123456',
+          },
+        },
+      };
+      
       const mockResponse = {
-        buckets: [
-          { id: '1', amount: '1000', voter: '0x123...', candidate: '0x456...', duration: 91 },
-          { id: '2', amount: '2000', voter: '0x789...', candidate: '0xabc...', duration: 182 }
-        ],
-        total: 2
+        gas: '21000',
+        intrinsicGas: '10000',
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation':
-            return 'getStakingBuckets';
-          case 'limit':
-            return 100;
-          case 'offset':
-            return 0;
-          case 'voter':
-            return '';
-          default:
-            return null;
-        }
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'estimateGasForAction';
+        if (paramName === 'action') return mockAction;
+        return '';
       });
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
+    });
+  });
+
+  describe('readContract', () => {
+    it('should successfully read contract state', async () => {
+      const mockAction = {
+        core: {
+          execution: {
+            contract: 'io1hp6y4eqr90j7tmul4w2wa8pm7wx462hq0mg4tw',
+            amount: '0',
+            data: '0x70a08231000000000000000000000000abc123',
+          },
+        },
+      };
+      
+      const mockResponse = {
+        data: '0x0000000000000000000000000000000000000000000000000de0b6b3a7640000',
+        receipt: {
+          status: 1,
+          gasConsumed: '5000',
+        },
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'readContract';
+        if (paramName === 'action') return mockAction;
+        return '';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
+    });
+  });
+
+  describe('suggestGasPrice', () => {
+    it('should successfully get suggested gas price', async () => {
+      const mockResponse = {
+        gasPrice: '1000000000000',
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'suggestGasPrice';
+        return '';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: 'https://babel-api.mainnet.iotex.io/api/core/suggestGasPrice',
+        headers: {
+          'X-API-KEY': 'test-api-key',
+          'Content-Type': 'application/json',
+        },
+        body: {},
+        json: true,
+      });
+    });
+  });
+
+  describe('getServerMeta', () => {
+    it('should successfully get server and network information', async () => {
+      const mockResponse = {
+        serverMeta: {
+          packageVersion: '1.0.0',
+          packageCommitID: 'abc123',
+          gitStatus: 'clean',
+          goVersion: 'go1.18',
+          buildTime: '2023-01-01T00:00:00Z',
+        },
+        chainMeta: {
+          height: '12345678',
+          numActions: '987654321',
+          tps: '100',
+          epoch: {
+            num: '12345',
+            height: '12345000',
+            gravityChainStartHeight: '100000',
+          },
+        },
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getServerMeta';
+        return '';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'GET',
-        url: 'https://iotexapi.com/api/staking/buckets?limit=100&offset=0',
+        url: 'https://babel-api.mainnet.iotex.io/api/core/getServerMeta',
         headers: {
-          'Authorization': 'Bearer test-api-key',
+          'X-API-KEY': 'test-api-key',
           'Content-Type': 'application/json',
         },
         json: true,
       });
     });
+  });
 
-    it('should handle error when getting staking buckets fails', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getStakingBuckets';
-        return param === 'limit' ? 100 : param === 'offset' ? 0 : '';
+  describe('error handling', () => {
+    it('should handle API errors correctly', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'suggestGasPrice';
+        return '';
       });
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      const mockError = new Error('API Error');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+
+      await expect(executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      )).rejects.toThrow('API Error');
+    });
+
+    it('should continue on fail when configured', async () => {
       mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-
-      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
-    });
-  });
-
-  describe('getStakingBucket', () => {
-    it('should get staking bucket by ID successfully', async () => {
-      const mockResponse = {
-        id: '12345',
-        amount: '1000',
-        voter: '0x123...',
-        candidate: '0x456...',
-        duration: 91,
-        createdAt: '2024-01-01T00:00:00Z'
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        return param === 'operation' ? 'getStakingBucket' : param === 'id' ? '12345' : null;
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'suggestGasPrice';
+        return '';
       });
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+      const mockError = new Error('API Error');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
 
-      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeSmartContractsOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }],
+      );
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://iotexapi.com/api/staking/buckets/12345',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('createStake', () => {
-    it('should create stake successfully', async () => {
-      const mockResponse = {
-        transactionHash: '0xabc123...',
-        bucketId: '67890',
-        status: 'pending'
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation':
-            return 'createStake';
-          case 'amount':
-            return '1000';
-          case 'candidate':
-            return '0x456...';
-          case 'duration':
-            return 91;
-          default:
-            return null;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://iotexapi.com/api/staking/stake',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-        body: {
-          amount: '1000',
-          candidate: '0x456...',
-          duration: 91,
-        },
-      });
-    });
-  });
-
-  describe('unstake', () => {
-    it('should unstake successfully', async () => {
-      const mockResponse = {
-        transactionHash: '0xdef456...',
-        bucketId: '12345',
-        status: 'pending'
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        return param === 'operation' ? 'unstake' : param === 'bucketId' ? '12345' : null;
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeStakingOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://iotexapi.com/api/staking/unstake',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-        body: {
-          bucketId: '12345',
-        },
-      });
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual({ error: 'API Error' });
     });
   });
 });
 
-describe('ChainMetadata Resource', () => {
+describe('XrcTokens Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
@@ -1396,7 +529,7 @@ describe('ChainMetadata Resource', () => {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
         apiKey: 'test-api-key',
-        baseUrl: 'https://iotexapi.com',
+        baseUrl: 'https://babel-api.mainnet.iotex.io',
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
@@ -1408,200 +541,768 @@ describe('ChainMetadata Resource', () => {
     };
   });
 
-  describe('getChainMetadata', () => {
-    it('should get chain metadata successfully', async () => {
+  describe('getTokenBalance operation', () => {
+    it('should get token balance successfully', async () => {
       const mockResponse = {
-        chainId: 4689,
-        networkName: 'IoTeX Mainnet',
-        blockTime: 5,
-        consensusScheme: 'RPOS',
+        accountMeta: {
+          address: 'io1test...',
+          balance: '1000000000000000000',
+          nonce: 1,
+        },
       };
 
       mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getChainMetadata';
-        return undefined;
+        if (paramName === 'operation') return 'getTokenBalance';
+        if (paramName === 'address') return 'io1test...';
+        return '';
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeChainMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+      const result = await executeXrcTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 },
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://babel-api.mainnet.iotex.io/api/core/getAccount',
+        headers: {
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json',
         },
-      ]);
+        qs: {
+          address: 'io1test...',
+        },
+        json: true,
+      });
     });
 
-    it('should handle getChainMetadata error', async () => {
+    it('should handle errors when getting token balance', async () => {
       mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getChainMetadata';
-        return undefined;
+        if (paramName === 'operation') return 'getTokenBalance';
+        if (paramName === 'address') return 'io1test...';
+        return '';
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
-      await expect(
-        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('API Error');
+      await expect(executeXrcTokensOperations.call(mockExecuteFunctions, [{ json: {} }])).rejects.toThrow();
     });
   });
 
-  describe('getChainStats', () => {
-    it('should get chain statistics successfully', async () => {
+  describe('readTokenContract operation', () => {
+    it('should read token contract successfully', async () => {
       const mockResponse = {
-        totalBlocks: 1000000,
-        totalTransactions: 5000000,
-        totalAccounts: 250000,
-        tps: 100,
+        receipt: {
+          returnValue: 'mock_return_value',
+        },
       };
 
       mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getChainStats';
-        return undefined;
+        if (paramName === 'operation') return 'readTokenContract';
+        if (paramName === 'contractAddress') return 'io1contract...';
+        if (paramName === 'method') return 'balanceOf';
+        if (paramName === 'params') return ['io1test...'];
+        return '';
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeChainMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+      const result = await executeXrcTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 },
-        },
-      ]);
-    });
-
-    it('should handle getChainStats error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getChainStats';
-        return undefined;
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Stats API Error'));
-
-      await expect(
-        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Stats API Error');
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
     });
   });
 
-  describe('getNetworkInfo', () => {
-    it('should get network information successfully', async () => {
+  describe('transferTokens operation', () => {
+    it('should transfer tokens successfully', async () => {
       const mockResponse = {
-        networkId: 4689,
-        protocolVersion: '1.0.0',
-        nodeCount: 100,
-        peers: 50,
+        actionHash: '0xtest_hash',
+        status: 'success',
+      };
+
+      const mockSignedAction = {
+        core: {
+          version: 1,
+          nonce: 1,
+          gasLimit: '20000',
+          gasPrice: '1000000000000',
+        },
+        signature: 'mock_signature',
       };
 
       mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getNetworkInfo';
-        return undefined;
+        if (paramName === 'operation') return 'transferTokens';
+        if (paramName === 'signedAction') return mockSignedAction;
+        return '';
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeChainMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+      const result = await executeXrcTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 },
-        },
-      ]);
-    });
-
-    it('should handle getNetworkInfo error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getNetworkInfo';
-        return undefined;
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network API Error'));
-
-      await expect(
-        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Network API Error');
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
     });
   });
 
-  describe('getCurrentEpoch', () => {
-    it('should get current epoch information successfully', async () => {
+  describe('getTokenMetadata operation', () => {
+    it('should get token metadata successfully', async () => {
       const mockResponse = {
-        epochNumber: 12345,
-        height: 1000000,
-        gravityChainStartHeight: 999950,
-        validators: 36,
+        receipt: {
+          returnValue: 'mock_metadata',
+        },
       };
 
       mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getCurrentEpoch';
-        return undefined;
+        if (paramName === 'operation') return 'getTokenMetadata';
+        if (paramName === 'contractAddress') return 'io1contract...';
+        return '';
       });
+
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeChainMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+      const result = await executeXrcTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([
-        {
-          json: mockResponse,
-          pairedItem: { item: 0 },
-        },
-      ]);
-    });
-
-    it('should handle getCurrentEpoch error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getCurrentEpoch';
-        return undefined;
-      });
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Epoch API Error'));
-
-      await expect(
-        executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Epoch API Error');
+      expect(result).toHaveLength(1);
+      expect(result[0].json.contractAddress).toBe('io1contract...');
+      expect(result[0].json.metadata).toBeDefined();
     });
   });
 
-  it('should handle unknown operation', async () => {
+  describe('getTokenSupply operation', () => {
+    it('should get token supply successfully', async () => {
+      const mockResponse = {
+        receipt: {
+          returnValue: '1000000000000000000000',
+        },
+      };
+
+      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+        if (paramName === 'operation') return 'getTokenSupply';
+        if (paramName === 'contractAddress') return 'io1contract...';
+        return '';
+      });
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeXrcTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
+    });
+  });
+});
+
+describe('DeviceRegistry Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({
+        apiKey: 'test-api-key',
+        baseUrl: 'https://babel-api.mainnet.iotex.io',
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: {
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn(),
+      },
+    };
+  });
+
+  test('should register device successfully', async () => {
+    const mockDeviceAction = {
+      deviceId: 'device123',
+      owner: '0x1234567890123456789012345678901234567890',
+      metadata: { type: 'sensor', location: 'warehouse' },
+      gasLimit: '100000',
+    };
+
     mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'unknownOperation';
-      return undefined;
+      switch (paramName) {
+        case 'operation':
+          return 'registerDevice';
+        case 'deviceAction':
+          return mockDeviceAction;
+        default:
+          return undefined;
+      }
     });
 
-    await expect(
-      executeChainMetadataOperations.call(mockExecuteFunctions, [{ json: {} }])
-    ).rejects.toThrow('Unknown operation: unknownOperation');
+    const mockResponse = {
+      success: true,
+      txHash: '0xabcdef123456789',
+      deviceId: 'device123',
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeDeviceRegistryOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.success).toBe(true);
+    expect(result[0].json.data).toEqual(mockResponse);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/sendAction',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': 'test-api-key',
+      },
+      body: {
+        action: mockDeviceAction,
+      },
+      json: true,
+    });
   });
 
-  it('should continue on fail when continueOnFail is true', async () => {
+  test('should get device info successfully', async () => {
     mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'getChainMetadata';
-      return undefined;
+      switch (paramName) {
+        case 'operation':
+          return 'getDeviceInfo';
+        case 'deviceId':
+          return 'device123';
+        case 'contractAddress':
+          return '0x1234567890123456789012345678901234567890';
+        case 'methodName':
+          return 'getDevice';
+        case 'methodParams':
+          return ['device123'];
+        default:
+          return undefined;
+      }
     });
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+
+    const mockResponse = {
+      deviceId: 'device123',
+      owner: '0x1234567890123456789012345678901234567890',
+      status: 'active',
+      metadata: { type: 'sensor' },
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeDeviceRegistryOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.success).toBe(true);
+    expect(result[0].json.data).toEqual(mockResponse);
+  });
+
+  test('should list devices successfully', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      switch (paramName) {
+        case 'operation':
+          return 'listDevices';
+        case 'ownerAddress':
+          return '0x1234567890123456789012345678901234567890';
+        case 'contractAddress':
+          return '0x1234567890123456789012345678901234567890';
+        case 'methodName':
+          return 'getDevicesByOwner';
+        case 'methodParams':
+          return ['0x1234567890123456789012345678901234567890'];
+        default:
+          return undefined;
+      }
+    });
+
+    const mockResponse = {
+      devices: ['device123', 'device456', 'device789'],
+      total: 3,
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeDeviceRegistryOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.success).toBe(true);
+    expect(result[0].json.data).toEqual(mockResponse);
+  });
+
+  test('should handle errors gracefully when continueOnFail is true', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      switch (paramName) {
+        case 'operation':
+          return 'getDeviceInfo';
+        case 'deviceId':
+          return 'device123';
+        case 'contractAddress':
+          return 'invalid-address';
+        default:
+          return undefined;
+      }
+    });
+
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Invalid contract address'));
 
-    const result = await executeChainMetadataOperations.call(
+    const result = await executeDeviceRegistryOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.success).toBe(false);
+    expect(result[0].json.error).toBe('Invalid contract address');
+  });
+
+  test('should get device metrics with time range', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      switch (paramName) {
+        case 'operation':
+          return 'getDeviceMetrics';
+        case 'deviceId':
+          return 'device123';
+        case 'contractAddress':
+          return '0x1234567890123456789012345678901234567890';
+        case 'timeRange':
+          return { start: 1640995200, end: 1641081600 };
+        case 'methodName':
+          return 'getDeviceMetrics';
+        case 'methodParams':
+          return ['device123', 1640995200, 1641081600];
+        default:
+          return undefined;
+      }
+    });
+
+    const mockResponse = {
+      deviceId: 'device123',
+      metrics: {
+        uptime: 0.99,
+        dataPoints: 1500,
+        lastUpdate: 1641081600,
+      },
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeDeviceRegistryOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.success).toBe(true);
+    expect(result[0].json.data).toEqual(mockResponse);
+  });
+});
+
+describe('PebbleTrackers Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({
+        apiKey: 'test-api-key',
+        baseUrl: 'https://babel-api.mainnet.iotex.io',
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: {
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn(),
+      },
+    };
+  });
+
+  test('should get Pebble data successfully', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'getPebbleData',
+        deviceId: 'pebble-001',
+        dataType: 'temperature',
+        timeRange: '24h',
+      };
+      return params[paramName];
+    });
+
+    const mockResponse = {
+      deviceId: 'pebble-001',
+      dataType: 'temperature',
+      values: [
+        { timestamp: 1640995200, value: 22.5 },
+        { timestamp: 1640998800, value: 23.1 },
+      ],
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executePebbleTrackersOperations.call(
       mockExecuteFunctions,
       [{ json: {} }]
     );
 
-    expect(result).toEqual([
-      {
-        json: { error: 'API Error' },
-        pairedItem: { item: 0 },
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/readContract',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
       },
-    ]);
+      body: {
+        contractAddress: 'pebble-data-contract',
+        abi: 'getPebbleData',
+        method: 'getPebbleData',
+        args: ['pebble-001', 'temperature', '24h'],
+      },
+      json: true,
+    });
+  });
+
+  test('should submit Pebble data successfully', async () => {
+    const dataAction = {
+      deviceId: 'pebble-001',
+      sensorData: { temperature: 25.3 },
+      signature: 'signature-hash',
+    };
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'submitPebbleData',
+        dataAction: dataAction,
+      };
+      return params[paramName];
+    });
+
+    const mockResponse = {
+      txHash: '0x123abc',
+      status: 'success',
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executePebbleTrackersOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/sendAction',
+      headers: {
+        'Authorization': 'Bearer test-api-key',
+        'Content-Type': 'application/json',
+      },
+      body: {
+        action: dataAction,
+        gasLimit: '100000',
+        gasPrice: '1000000000',
+      },
+      json: true,
+    });
+  });
+
+  test('should get Pebble location successfully', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'getPebbleLocation',
+        deviceId: 'pebble-001',
+        timestamp: 1640995200,
+      };
+      return params[paramName];
+    });
+
+    const mockResponse = {
+      deviceId: 'pebble-001',
+      latitude: 37.7749,
+      longitude: -122.4194,
+      timestamp: 1640995200,
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executePebbleTrackersOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+  });
+
+  test('should get Pebble rewards successfully', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'getPebbleRewards',
+        deviceId: 'pebble-001',
+      };
+      return params[paramName];
+    });
+
+    const mockResponse = {
+      deviceId: 'pebble-001',
+      totalRewards: '1000000000000000000',
+      claimedRewards: '500000000000000000',
+      pendingRewards: '500000000000000000',
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executePebbleTrackersOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+  });
+
+  test('should validate Pebble proof successfully', async () => {
+    const proofData = {
+      location: { lat: 37.7749, lng: -122.4194 },
+      timestamp: 1640995200,
+      signature: 'proof-signature',
+    };
+
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'validatePebbleProof',
+        deviceId: 'pebble-001',
+        proofData: proofData,
+      };
+      return params[paramName];
+    });
+
+    const mockResponse = {
+      valid: true,
+      score: 95,
+      verificationHash: '0xabc123',
+    };
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executePebbleTrackersOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+  });
+
+  test('should handle API errors', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'getPebbleData',
+        deviceId: 'invalid-device',
+        dataType: 'temperature',
+        timeRange: '24h',
+      };
+      return params[paramName];
+    });
+
+    const error = new Error('Device not found');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(error);
+
+    await expect(
+      executePebbleTrackersOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('Device not found');
+  });
+
+  test('should handle errors when continueOnFail is true', async () => {
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
+      const params: any = {
+        operation: 'getPebbleData',
+        deviceId: 'invalid-device',
+        dataType: 'temperature',
+        timeRange: '24h',
+      };
+      return params[paramName];
+    });
+
+    const error = new Error('Device not found');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(error);
+
+    const result = await executePebbleTrackersOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual({ error: 'Device not found' });
+  });
+});
+
+describe('W3bstreamProjects Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({
+        apiKey: 'test-api-key',
+        baseUrl: 'https://babel-api.mainnet.iotex.io',
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: {
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn(),
+      },
+    };
+  });
+
+  test('should create project successfully', async () => {
+    const mockResponse = { projectId: 'test-project-id', status: 'created' };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'createProject';
+      if (param === 'projectAction') return { name: 'Test Project' };
+      return '';
+    });
+
+    const result = await executeW3bstreamProjectsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/sendAction',
+      headers: {
+        'X-API-KEY': 'test-api-key',
+        'Content-Type': 'application/json',
+      },
+      body: { name: 'Test Project' },
+      json: true,
+    });
+  });
+
+  test('should get project info successfully', async () => {
+    const mockResponse = { projectId: 'test-project-id', name: 'Test Project' };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getProjectInfo';
+      if (param === 'projectId') return 'test-project-id';
+      return '';
+    });
+
+    const result = await executeW3bstreamProjectsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/readContract',
+      headers: {
+        'X-API-KEY': 'test-api-key',
+        'Content-Type': 'application/json',
+      },
+      body: { projectId: 'test-project-id' },
+      json: true,
+    });
+  });
+
+  test('should list projects successfully', async () => {
+    const mockResponse = { projects: [{ id: 'project1' }, { id: 'project2' }] };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'listProjects';
+      if (param === 'ownerAddress') return '0x1234567890abcdef';
+      return '';
+    });
+
+    const result = await executeW3bstreamProjectsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/readContract',
+      headers: {
+        'X-API-KEY': 'test-api-key',
+        'Content-Type': 'application/json',
+      },
+      body: { ownerAddress: '0x1234567890abcdef' },
+      json: true,
+    });
+  });
+
+  test('should process real world data successfully', async () => {
+    const mockResponse = { transactionId: 'tx123', status: 'processed' };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'processRealWorldData';
+      if (param === 'dataAction') return { data: 'sensor-data', timestamp: 1234567890 };
+      return '';
+    });
+
+    const result = await executeW3bstreamProjectsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'https://babel-api.mainnet.iotex.io/api/core/sendAction',
+      headers: {
+        'X-API-KEY': 'test-api-key',
+        'Content-Type': 'application/json',
+      },
+      body: { data: 'sensor-data', timestamp: 1234567890 },
+      json: true,
+    });
+  });
+
+  test('should handle API error gracefully', async () => {
+    const mockError = new Error('API Error');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'getProjectInfo';
+      if (param === 'projectId') return 'test-project-id';
+      return '';
+    });
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+    const result = await executeW3bstreamProjectsOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
+  });
+
+  test('should throw error for unknown operation', async () => {
+    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+      if (param === 'operation') return 'unknownOperation';
+      return '';
+    });
+
+    await expect(
+      executeW3bstreamProjectsOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('Unknown operation: unknownOperation');
   });
 });
 });

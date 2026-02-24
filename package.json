@@ -4,6 +4,14 @@
   "description": "n8n community node for IoTeX",
   "license": "SEE LICENSE IN LICENSE.md",
   "main": "dist/nodes/IoTeX/IoTeX.node.js",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "iotex",
+    "blockchain",
+    "depin",
+    "iot"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },
@@ -11,6 +19,15 @@
   "files": [
     "dist/**/*"
   ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/IoTeXApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/IoTeX/IoTeX.node.js"
+    ]
+  },
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
@@ -21,34 +38,20 @@
     "test:coverage": "jest --coverage",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [
-    "n8n-community-node-package",
-    "iotex",
-    "blockchain",
-    "crypto"
-  ],
-  "n8n": {
-    "nodes": [
-      "dist/nodes/IoTeX/IoTeX.node.js"
-    ],
-    "credentials": [
-      "dist/credentials/IoTeXApi.credentials.js"
-    ]
-  },
   "dependencies": {
     "axios": "^1.6.0"
   },
   "devDependencies": {
-    "@types/node": "^18.19.0",
+    "@types/node": "^18.16.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "eslint": "^8.50.0",
+    "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "gulp": "^4.0.2",
-    "jest": "^29.7.0",
-    "n8n-workflow": "*",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.0"
+    "jest": "^29.5.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "n8n-workflow": "*"
   },
   "peerDependencies": {
     "n8n-workflow": "*"

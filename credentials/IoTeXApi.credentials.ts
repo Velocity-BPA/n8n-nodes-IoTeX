@@ -5,26 +5,26 @@ import {
 
 export class IoTeXApi implements ICredentialType {
 	name = 'ioTeXApi';
-
 	displayName = 'IoTeX API';
-
 	properties: INodeProperties[] = [
-		{
-			displayName: 'API Base URL',
-			name: 'baseUrl',
-			type: 'string',
-			default: 'https://iotexapi.com',
-			required: true,
-			description: 'The base URL for the IoTeX API',
-		},
 		{
 			displayName: 'API Key',
 			name: 'apiKey',
 			type: 'string',
-			typeOptions: { password: true },
+			typeOptions: {
+				password: true,
+			},
 			default: '',
 			required: false,
-			description: 'API key for authenticated requests. Leave empty for public endpoints.',
+			description: 'API key for IoTeX blockchain access. Some endpoints are public and don\'t require authentication.',
+		},
+		{
+			displayName: 'API Base URL',
+			name: 'baseUrl',
+			type: 'string',
+			default: 'https://babel-api.mainnet.iotex.io',
+			required: true,
+			description: 'Base URL for IoTeX API endpoints',
 		},
 	];
 }

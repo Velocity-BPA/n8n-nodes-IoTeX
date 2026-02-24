@@ -49,39 +49,31 @@ export class IoTeX implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: 'Accounts',
-            value: 'accounts',
-          },
-          {
-            name: 'Blocks',
-            value: 'blocks',
-          },
-          {
-            name: 'Transactions',
-            value: 'transactions',
-          },
-          {
-            name: 'Actions',
-            value: 'actions',
+            name: 'BlockchainData',
+            value: 'blockchainData',
           },
           {
             name: 'SmartContracts',
             value: 'smartContracts',
           },
           {
-            name: 'Delegates',
-            value: 'delegates',
+            name: 'XrcTokens',
+            value: 'xrcTokens',
           },
           {
-            name: 'Staking',
-            value: 'staking',
+            name: 'DeviceRegistry',
+            value: 'deviceRegistry',
           },
           {
-            name: 'ChainMetadata',
-            value: 'chainMetadata',
+            name: 'PebbleTrackers',
+            value: 'pebbleTrackers',
+          },
+          {
+            name: 'W3bstreamProjects',
+            value: 'w3bstreamProjects',
           }
         ],
-        default: 'accounts',
+        default: 'blockchainData',
       },
       // Operation dropdowns per resource
 {
@@ -91,156 +83,54 @@ export class IoTeX implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['accounts'],
+      resource: ['blockchainData'],
     },
   },
   options: [
     {
-      name: 'Get Account',
-      value: 'getAccount',
-      description: 'Get account details by address',
-      action: 'Get account details',
+      name: 'Get Chain Meta',
+      value: 'getChainMeta',
+      description: 'Get blockchain metadata and statistics',
+      action: 'Get chain meta',
     },
     {
-      name: 'Get Balance',
-      value: 'getBalance',
-      description: 'Get account balance',
-      action: 'Get account balance',
-    },
-    {
-      name: 'Get Account Transactions',
-      value: 'getAccountTransactions',
-      description: 'Get transactions for account',
-      action: 'Get account transactions',
-    },
-    {
-      name: 'Get Account Actions',
-      value: 'getAccountActions',
-      description: 'Get actions performed by account',
-      action: 'Get account actions',
-    },
-  ],
-  default: 'getAccount',
-},
-{
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['blocks'],
-    },
-  },
-  options: [
-    {
-      name: 'Get Block by Height',
-      value: 'getBlockByHeight',
-      description: 'Get block information by block height',
-      action: 'Get block by height',
-    },
-    {
-      name: 'Get Block by Hash',
-      value: 'getBlockByHash',
-      description: 'Get block information by block hash',
-      action: 'Get block by hash',
-    },
-    {
-      name: 'Get Blocks',
-      value: 'getBlocks',
-      description: 'Get a list of blocks with pagination',
-      action: 'Get blocks',
-    },
-    {
-      name: 'Get Latest Block',
-      value: 'getLatestBlock',
-      description: 'Get the latest block information',
-      action: 'Get latest block',
-    },
-    {
-      name: 'Get Block Transactions',
-      value: 'getBlockTransactions',
-      description: 'Get all transactions in a specific block',
-      action: 'Get block transactions',
-    },
-  ],
-  default: 'getLatestBlock',
-},
-{
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-    },
-  },
-  options: [
-    {
-      name: 'Get Transaction',
-      value: 'getTransaction',
-      description: 'Get transaction by hash',
-      action: 'Get transaction by hash',
-    },
-    {
-      name: 'Get Transactions',
-      value: 'getTransactions',
-      description: 'Get list of transactions',
-      action: 'Get list of transactions',
-    },
-    {
-      name: 'Send Transaction',
-      value: 'sendTransaction',
-      description: 'Broadcast a transaction',
-      action: 'Send transaction',
-    },
-    {
-      name: 'Get Transaction Receipt',
-      value: 'getTransactionReceipt',
-      description: 'Get transaction receipt by hash',
-      action: 'Get transaction receipt',
-    },
-  ],
-  default: 'getTransaction',
-},
-{
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['actions'],
-    },
-  },
-  options: [
-    {
-      name: 'Get Action',
-      value: 'getAction',
-      description: 'Get action by hash',
-      action: 'Get action by hash',
+      name: 'Get Block Metas',
+      value: 'getBlockMetas',
+      description: 'Get block metadata by height or hash',
+      action: 'Get block metas',
     },
     {
       name: 'Get Actions',
       value: 'getActions',
-      description: 'Get list of actions',
-      action: 'Get list of actions',
+      description: 'Get transaction/action data',
+      action: 'Get actions',
     },
     {
-      name: 'Send Action',
-      value: 'sendAction',
-      description: 'Send an action to the blockchain',
-      action: 'Send action to blockchain',
+      name: 'Get Receipt By Action',
+      value: 'getReceiptByAction',
+      description: 'Get transaction receipt',
+      action: 'Get receipt by action',
     },
     {
-      name: 'Get Action Receipt',
-      value: 'getActionReceipt',
-      description: 'Get action execution receipt',
-      action: 'Get action execution receipt',
+      name: 'Get Account',
+      value: 'getAccount',
+      description: 'Get account information',
+      action: 'Get account',
+    },
+    {
+      name: 'Get Actions From Address',
+      value: 'getActionsFromAddress',
+      description: 'Get actions from specific address',
+      action: 'Get actions from address',
+    },
+    {
+      name: 'Get Actions To Address',
+      value: 'getActionsToAddress',
+      description: 'Get actions to specific address',
+      action: 'Get actions to address',
     },
   ],
-  default: 'getAction',
+  default: 'getChainMeta',
 },
 {
   displayName: 'Operation',
@@ -254,31 +144,37 @@ export class IoTeX implements INodeType {
   },
   options: [
     {
-      name: 'Call Contract',
-      value: 'callContract',
-      description: 'Execute a read-only contract call',
-      action: 'Call contract',
+      name: 'Send Action',
+      value: 'sendAction',
+      description: 'Submit signed transaction/action to blockchain',
+      action: 'Send action to blockchain',
     },
     {
-      name: 'Execute Contract',
-      value: 'executeContract',
-      description: 'Execute a contract transaction',
-      action: 'Execute contract',
+      name: 'Estimate Gas For Action',
+      value: 'estimateGasForAction',
+      description: 'Estimate gas cost for action',
+      action: 'Estimate gas for action',
     },
     {
-      name: 'Get Contract',
-      value: 'getContract',
-      description: 'Get contract information',
-      action: 'Get contract',
+      name: 'Read Contract',
+      value: 'readContract',
+      description: 'Read smart contract state',
+      action: 'Read smart contract state',
     },
     {
-      name: 'Get Contract ABI',
-      value: 'getContractABI',
-      description: 'Get contract ABI',
-      action: 'Get contract ABI',
+      name: 'Suggest Gas Price',
+      value: 'suggestGasPrice',
+      description: 'Get suggested gas price',
+      action: 'Get suggested gas price',
+    },
+    {
+      name: 'Get Server Meta',
+      value: 'getServerMeta',
+      description: 'Get server and network information',
+      action: 'Get server and network information',
     },
   ],
-  default: 'callContract',
+  default: 'sendAction',
 },
 {
   displayName: 'Operation',
@@ -287,36 +183,42 @@ export class IoTeX implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['delegates'],
+      resource: ['xrcTokens'],
     },
   },
   options: [
     {
-      name: 'Get Delegates',
-      value: 'getDelegates',
-      description: 'Get list of delegates',
-      action: 'Get delegates',
+      name: 'Get Token Balance',
+      value: 'getTokenBalance',
+      description: 'Get XRC token balance for address',
+      action: 'Get token balance',
     },
     {
-      name: 'Get Delegate',
-      value: 'getDelegate',
-      description: 'Get delegate by name',
-      action: 'Get delegate by name',
+      name: 'Read Token Contract',
+      value: 'readTokenContract',
+      description: 'Read XRC token contract data',
+      action: 'Read token contract',
     },
     {
-      name: 'Get Delegate Votes',
-      value: 'getDelegateVotes',
-      description: 'Get votes for delegate',
-      action: 'Get delegate votes',
+      name: 'Transfer Tokens',
+      value: 'transferTokens',
+      description: 'Send XRC tokens between addresses',
+      action: 'Transfer tokens',
     },
     {
-      name: 'Get Delegate Rankings',
-      value: 'getDelegateRankings',
-      description: 'Get delegate rankings',
-      action: 'Get delegate rankings',
+      name: 'Get Token Metadata',
+      value: 'getTokenMetadata',
+      description: 'Get token name, symbol, decimals',
+      action: 'Get token metadata',
+    },
+    {
+      name: 'Get Token Supply',
+      value: 'getTokenSupply',
+      description: 'Get total token supply',
+      action: 'Get token supply',
     },
   ],
-  default: 'getDelegates',
+  default: 'getTokenBalance',
 },
 {
   displayName: 'Operation',
@@ -325,36 +227,42 @@ export class IoTeX implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['staking'],
+      resource: ['deviceRegistry'],
     },
   },
   options: [
     {
-      name: 'Get Staking Buckets',
-      value: 'getStakingBuckets',
-      description: 'Retrieve all staking buckets with optional filters',
-      action: 'Get staking buckets',
+      name: 'Register Device',
+      value: 'registerDevice',
+      description: 'Register new IoT device on blockchain',
+      action: 'Register device',
     },
     {
-      name: 'Get Staking Bucket',
-      value: 'getStakingBucket',
-      description: 'Get a specific staking bucket by ID',
-      action: 'Get staking bucket by ID',
+      name: 'Get Device Info',
+      value: 'getDeviceInfo',
+      description: 'Get device information and status',
+      action: 'Get device info',
     },
     {
-      name: 'Create Stake',
-      value: 'createStake',
-      description: 'Create a new staking transaction',
-      action: 'Create stake transaction',
+      name: 'List Devices',
+      value: 'listDevices',
+      description: 'List registered devices',
+      action: 'List devices',
     },
     {
-      name: 'Unstake',
-      value: 'unstake',
-      description: 'Create an unstaking transaction',
-      action: 'Create unstake transaction',
+      name: 'Update Device Status',
+      value: 'updateDeviceStatus',
+      description: 'Update device status or metadata',
+      action: 'Update device status',
+    },
+    {
+      name: 'Get Device Metrics',
+      value: 'getDeviceMetrics',
+      description: 'Get device performance metrics',
+      action: 'Get device metrics',
     },
   ],
-  default: 'getStakingBuckets',
+  default: 'registerDevice',
 },
 {
   displayName: 'Operation',
@@ -363,38 +271,241 @@ export class IoTeX implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['chainMetadata'],
+      resource: ['pebbleTrackers'],
     },
   },
   options: [
     {
-      name: 'Get Chain Metadata',
-      value: 'getChainMetadata',
-      description: 'Get chain metadata information',
-      action: 'Get chain metadata',
+      name: 'Get Pebble Data',
+      value: 'getPebbleData',
+      description: 'Get Pebble tracker sensor data',
+      action: 'Get Pebble tracker sensor data',
     },
     {
-      name: 'Get Chain Statistics',
-      value: 'getChainStats',
-      description: 'Get blockchain statistics',
-      action: 'Get chain statistics',
+      name: 'Submit Pebble Data',
+      value: 'submitPebbleData',
+      description: 'Submit verified Pebble data to blockchain',
+      action: 'Submit verified Pebble data to blockchain',
     },
     {
-      name: 'Get Network Information',
-      value: 'getNetworkInfo',
-      description: 'Get network information',
-      action: 'Get network information',
+      name: 'Get Pebble Location',
+      value: 'getPebbleLocation',
+      description: 'Get Pebble device location data',
+      action: 'Get Pebble device location data',
     },
     {
-      name: 'Get Current Epoch',
-      value: 'getCurrentEpoch',
-      description: 'Get current epoch information',
-      action: 'Get current epoch',
+      name: 'Get Pebble Rewards',
+      value: 'getPebbleRewards',
+      description: 'Get rewards earned by Pebble device',
+      action: 'Get rewards earned by Pebble device',
+    },
+    {
+      name: 'Validate Pebble Proof',
+      value: 'validatePebbleProof',
+      description: 'Validate Pebble proof-of-presence',
+      action: 'Validate Pebble proof-of-presence',
     },
   ],
-  default: 'getChainMetadata',
+  default: 'getPebbleData',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: {
+    show: {
+      resource: ['w3bstreamProjects'],
+    },
+  },
+  options: [
+    {
+      name: 'Create Project',
+      value: 'createProject',
+      description: 'Create new W3bstream project',
+      action: 'Create project',
+    },
+    {
+      name: 'Get Project Info',
+      value: 'getProjectInfo',
+      description: 'Get W3bstream project details',
+      action: 'Get project info',
+    },
+    {
+      name: 'List Projects',
+      value: 'listProjects',
+      description: 'List W3bstream projects',
+      action: 'List projects',
+    },
+    {
+      name: 'Update Project',
+      value: 'updateProject',
+      description: 'Update W3bstream project configuration',
+      action: 'Update project',
+    },
+    {
+      name: 'Get Project Metrics',
+      value: 'getProjectMetrics',
+      description: 'Get project processing metrics',
+      action: 'Get project metrics',
+    },
+    {
+      name: 'Process Real World Data',
+      value: 'processRealWorldData',
+      description: 'Submit real-world data for processing',
+      action: 'Process real world data',
+    },
+  ],
+  default: 'createProject',
 },
       // Parameter definitions
+{
+  displayName: 'By Index',
+  name: 'byIndex',
+  type: 'collection',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getBlockMetas'],
+    },
+  },
+  default: {},
+  placeholder: 'Add by index parameters',
+  options: [
+    {
+      displayName: 'Start',
+      name: 'start',
+      type: 'number',
+      default: 1,
+      description: 'Starting block height',
+    },
+    {
+      displayName: 'Count',
+      name: 'count',
+      type: 'number',
+      default: 1,
+      description: 'Number of blocks to retrieve',
+    },
+  ],
+},
+{
+  displayName: 'By Hash',
+  name: 'byHash',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getBlockMetas'],
+    },
+  },
+  default: '',
+  description: 'Block hash to retrieve',
+},
+{
+  displayName: 'Count',
+  name: 'count',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getBlockMetas'],
+    },
+  },
+  default: 1,
+  description: 'Number of blocks to retrieve',
+},
+{
+  displayName: 'By Index',
+  name: 'byIndex',
+  type: 'collection',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getActions'],
+    },
+  },
+  default: {},
+  placeholder: 'Add by index parameters',
+  options: [
+    {
+      displayName: 'Start',
+      name: 'start',
+      type: 'number',
+      default: 1,
+      description: 'Starting action index',
+    },
+    {
+      displayName: 'Count',
+      name: 'count',
+      type: 'number',
+      default: 1,
+      description: 'Number of actions to retrieve',
+    },
+  ],
+},
+{
+  displayName: 'By Hash',
+  name: 'byHash',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getActions'],
+    },
+  },
+  default: '',
+  description: 'Action hash to retrieve',
+},
+{
+  displayName: 'By Address',
+  name: 'byAddr',
+  type: 'collection',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getActions'],
+    },
+  },
+  default: {},
+  placeholder: 'Add by address parameters',
+  options: [
+    {
+      displayName: 'Address',
+      name: 'address',
+      type: 'string',
+      default: '',
+      description: 'Address to query',
+    },
+    {
+      displayName: 'Start',
+      name: 'start',
+      type: 'number',
+      default: 1,
+      description: 'Starting index',
+    },
+    {
+      displayName: 'Count',
+      name: 'count',
+      type: 'number',
+      default: 1,
+      description: 'Number of actions to retrieve',
+    },
+  ],
+},
+{
+  displayName: 'Action Hash',
+  name: 'actionHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getReceiptByAction'],
+    },
+  },
+  default: '',
+  description: 'The hash of the action to get receipt for',
+},
 {
   displayName: 'Address',
   name: 'address',
@@ -402,299 +513,148 @@ export class IoTeX implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['accounts'],
-      operation: ['getAccount', 'getBalance', 'getAccountTransactions', 'getAccountActions'],
+      resource: ['blockchainData'],
+      operation: ['getAccount'],
     },
   },
   default: '',
-  description: 'The IoTeX account address',
+  description: 'The account address',
 },
 {
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['accounts'],
-      operation: ['getAccountTransactions', 'getAccountActions'],
-    },
-  },
-  default: 100,
-  description: 'Maximum number of results to return',
-},
-{
-  displayName: 'Offset',
-  name: 'offset',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['accounts'],
-      operation: ['getAccountTransactions', 'getAccountActions'],
-    },
-  },
-  default: 0,
-  description: 'Number of results to skip',
-},
-{
-  displayName: 'Block Height',
-  name: 'height',
-  type: 'number',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['blocks'],
-      operation: ['getBlockByHeight'],
-    },
-  },
-  default: 1,
-  description: 'The height of the block to retrieve',
-},
-{
-  displayName: 'Block Hash',
-  name: 'hash',
+  displayName: 'Address',
+  name: 'address',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['blocks'],
-      operation: ['getBlockByHash'],
+      resource: ['blockchainData'],
+      operation: ['getActionsFromAddress'],
     },
   },
   default: '',
-  description: 'The hash of the block to retrieve',
+  description: 'The address to get actions from',
 },
 {
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['blocks'],
-      operation: ['getBlocks'],
-    },
-  },
-  default: 10,
-  description: 'Maximum number of blocks to return (default: 10)',
-},
-{
-  displayName: 'Offset',
-  name: 'offset',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['blocks'],
-      operation: ['getBlocks'],
-    },
-  },
-  default: 0,
-  description: 'Number of blocks to skip (default: 0)',
-},
-{
-  displayName: 'Start Height',
+  displayName: 'Start',
   name: 'start',
   type: 'number',
   displayOptions: {
     show: {
-      resource: ['blocks'],
-      operation: ['getBlocks'],
-    },
-  },
-  default: undefined,
-  description: 'Starting block height for the range',
-},
-{
-  displayName: 'End Height',
-  name: 'end',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['blocks'],
-      operation: ['getBlocks'],
-    },
-  },
-  default: undefined,
-  description: 'Ending block height for the range',
-},
-{
-  displayName: 'Block Height',
-  name: 'height',
-  type: 'number',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['blocks'],
-      operation: ['getBlockTransactions'],
+      resource: ['blockchainData'],
+      operation: ['getActionsFromAddress'],
     },
   },
   default: 1,
-  description: 'The height of the block to get transactions from',
+  description: 'Starting index',
 },
 {
-  displayName: 'Transaction Hash',
-  name: 'hash',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-      operation: ['getTransaction'],
-    },
-  },
-  default: '',
-  description: 'The hash of the transaction to retrieve',
-},
-{
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-      operation: ['getTransactions'],
-    },
-  },
-  default: 50,
-  description: 'Maximum number of transactions to retrieve',
-},
-{
-  displayName: 'Offset',
-  name: 'offset',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-      operation: ['getTransactions'],
-    },
-  },
-  default: 0,
-  description: 'Number of transactions to skip',
-},
-{
-  displayName: 'Address',
-  name: 'address',
-  type: 'string',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-      operation: ['getTransactions'],
-    },
-  },
-  default: '',
-  description: 'Filter transactions by address',
-},
-{
-  displayName: 'Signed Transaction',
-  name: 'signedTransaction',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-      operation: ['sendTransaction'],
-    },
-  },
-  default: '',
-  description: 'The signed transaction data to broadcast',
-},
-{
-  displayName: 'Transaction Hash',
-  name: 'hash',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['transactions'],
-      operation: ['getTransactionReceipt'],
-    },
-  },
-  default: '',
-  description: 'The hash of the transaction to get receipt for',
-},
-{
-  displayName: 'Hash',
-  name: 'hash',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['actions'],
-      operation: ['getAction'],
-    },
-  },
-  default: '',
-  description: 'The action hash',
-},
-{
-  displayName: 'Hash',
-  name: 'hash',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['actions'],
-      operation: ['getActionReceipt'],
-    },
-  },
-  default: '',
-  description: 'The action hash',
-},
-{
-  displayName: 'Limit',
-  name: 'limit',
+  displayName: 'Count',
+  name: 'count',
   type: 'number',
   displayOptions: {
     show: {
-      resource: ['actions'],
-      operation: ['getActions'],
+      resource: ['blockchainData'],
+      operation: ['getActionsFromAddress'],
     },
   },
   default: 10,
-  description: 'Maximum number of actions to retrieve',
-},
-{
-  displayName: 'Offset',
-  name: 'offset',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['actions'],
-      operation: ['getActions'],
-    },
-  },
-  default: 0,
-  description: 'Number of actions to skip',
+  description: 'Number of actions to retrieve',
 },
 {
   displayName: 'Address',
   name: 'address',
   type: 'string',
+  required: true,
   displayOptions: {
     show: {
-      resource: ['actions'],
-      operation: ['getActions'],
+      resource: ['blockchainData'],
+      operation: ['getActionsToAddress'],
     },
   },
   default: '',
-  description: 'Filter actions by address',
+  description: 'The address to get actions to',
 },
 {
-  displayName: 'Action Data',
+  displayName: 'Start',
+  name: 'start',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getActionsToAddress'],
+    },
+  },
+  default: 1,
+  description: 'Starting index',
+},
+{
+  displayName: 'Count',
+  name: 'count',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['blockchainData'],
+      operation: ['getActionsToAddress'],
+    },
+  },
+  default: 10,
+  description: 'Number of actions to retrieve',
+},
+{
+  displayName: 'Action',
   name: 'action',
   type: 'json',
   required: true,
   displayOptions: {
     show: {
-      resource: ['actions'],
+      resource: ['smartContracts'],
       operation: ['sendAction'],
     },
   },
   default: '{}',
-  description: 'The action data to send to the blockchain',
+  description: 'The signed action/transaction to submit to the blockchain',
+},
+{
+  displayName: 'Action',
+  name: 'action',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['smartContracts'],
+      operation: ['estimateGasForAction'],
+    },
+  },
+  default: '{}',
+  description: 'The action to estimate gas cost for',
+},
+{
+  displayName: 'Action',
+  name: 'action',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['smartContracts'],
+      operation: ['readContract'],
+    },
+  },
+  default: '{}',
+  description: 'The contract read action parameters',
+},
+{
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['xrcTokens'],
+      operation: ['getTokenBalance'],
+    },
+  },
+  default: '',
+  description: 'The wallet address to check token balance',
 },
 {
   displayName: 'Contract Address',
@@ -703,12 +663,12 @@ export class IoTeX implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['callContract'],
+      resource: ['xrcTokens'],
+      operation: ['readTokenContract', 'getTokenMetadata', 'getTokenSupply'],
     },
   },
   default: '',
-  description: 'The contract address to call',
+  description: 'The XRC token contract address',
 },
 {
   displayName: 'Method',
@@ -717,8 +677,8 @@ export class IoTeX implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['callContract'],
+      resource: ['xrcTokens'],
+      operation: ['readTokenContract'],
     },
   },
   default: '',
@@ -727,15 +687,58 @@ export class IoTeX implements INodeType {
 {
   displayName: 'Parameters',
   name: 'params',
-  type: 'string',
+  type: 'json',
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['callContract'],
+      resource: ['xrcTokens'],
+      operation: ['readTokenContract'],
     },
   },
   default: '[]',
-  description: 'Method parameters as JSON array',
+  description: 'Parameters for the contract method as JSON array',
+},
+{
+  displayName: 'Signed Action',
+  name: 'signedAction',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['xrcTokens'],
+      operation: ['transferTokens'],
+    },
+  },
+  default: '{}',
+  description: 'The signed transaction action for token transfer',
+},
+{
+  displayName: 'Device Action',
+  name: 'deviceAction',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['deviceRegistry'],
+      operation: ['registerDevice'],
+    },
+  },
+  default: '{}',
+  description: 'Device registration action parameters including device ID, owner, metadata, and transaction details',
+  placeholder: '{"deviceId": "device123", "owner": "0x...", "metadata": {...}, "gasLimit": "100000"}',
+},
+{
+  displayName: 'Device ID',
+  name: 'deviceId',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['deviceRegistry'],
+      operation: ['getDeviceInfo', 'getDeviceMetrics'],
+    },
+  },
+  default: '',
+  description: 'The unique identifier of the device',
 },
 {
   displayName: 'Contract Address',
@@ -744,244 +747,313 @@ export class IoTeX implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['executeContract'],
+      resource: ['deviceRegistry'],
+      operation: ['getDeviceInfo', 'listDevices', 'getDeviceMetrics'],
     },
   },
   default: '',
-  description: 'The contract address to execute',
+  description: 'The smart contract address for device registry',
 },
 {
-  displayName: 'Method',
-  name: 'method',
+  displayName: 'Owner Address',
+  name: 'ownerAddress',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['executeContract'],
+      resource: ['deviceRegistry'],
+      operation: ['listDevices'],
     },
   },
   default: '',
-  description: 'The contract method to execute',
+  description: 'The wallet address of the device owner',
 },
 {
-  displayName: 'Parameters',
-  name: 'params',
-  type: 'string',
+  displayName: 'Device Action',
+  name: 'deviceAction',
+  type: 'json',
+  required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['executeContract'],
+      resource: ['deviceRegistry'],
+      operation: ['updateDeviceStatus'],
+    },
+  },
+  default: '{}',
+  description: 'Device update action parameters including device ID, new status, metadata, and transaction details',
+  placeholder: '{"deviceId": "device123", "status": "active", "metadata": {...}, "gasLimit": "50000"}',
+},
+{
+  displayName: 'Time Range',
+  name: 'timeRange',
+  type: 'json',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['deviceRegistry'],
+      operation: ['getDeviceMetrics'],
+    },
+  },
+  default: '{}',
+  description: 'Time range for metrics query (start, end timestamps)',
+  placeholder: '{"start": 1640995200, "end": 1641081600}',
+},
+{
+  displayName: 'Method Name',
+  name: 'methodName',
+  type: 'string',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['deviceRegistry'],
+      operation: ['getDeviceInfo', 'listDevices', 'getDeviceMetrics'],
+    },
+  },
+  default: '',
+  description: 'The contract method to call for reading data',
+},
+{
+  displayName: 'Method Parameters',
+  name: 'methodParams',
+  type: 'json',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['deviceRegistry'],
+      operation: ['getDeviceInfo', 'listDevices', 'getDeviceMetrics'],
     },
   },
   default: '[]',
-  description: 'Method parameters as JSON array',
+  description: 'Parameters for the contract method',
 },
 {
-  displayName: 'Gas Limit',
-  name: 'gasLimit',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['smartContracts'],
-      operation: ['executeContract'],
-    },
-  },
-  default: 1000000,
-  description: 'Gas limit for the transaction',
-},
-{
-  displayName: 'Address',
-  name: 'address',
+  displayName: 'Device ID',
+  name: 'deviceId',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['getContract'],
+      resource: ['pebbleTrackers'],
+      operation: ['getPebbleData'],
     },
   },
   default: '',
-  description: 'The contract address',
+  description: 'The Pebble device identifier',
 },
 {
-  displayName: 'Address',
-  name: 'address',
+  displayName: 'Data Type',
+  name: 'dataType',
+  type: 'options',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['pebbleTrackers'],
+      operation: ['getPebbleData'],
+    },
+  },
+  options: [
+    {
+      name: 'Temperature',
+      value: 'temperature',
+    },
+    {
+      name: 'Humidity',
+      value: 'humidity',
+    },
+    {
+      name: 'Light',
+      value: 'light',
+    },
+    {
+      name: 'Motion',
+      value: 'motion',
+    },
+  ],
+  default: 'temperature',
+  description: 'Type of sensor data to retrieve',
+},
+{
+  displayName: 'Time Range',
+  name: 'timeRange',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['smartContracts'],
-      operation: ['getContractABI'],
+      resource: ['pebbleTrackers'],
+      operation: ['getPebbleData'],
+    },
+  },
+  default: '24h',
+  description: 'Time range for data retrieval (e.g., 24h, 7d, 30d)',
+},
+{
+  displayName: 'Data Action',
+  name: 'dataAction',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['pebbleTrackers'],
+      operation: ['submitPebbleData'],
     },
   },
   default: '',
-  description: 'The contract address',
+  description: 'JSON object containing the data action to submit',
 },
 {
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
+  displayName: 'Device ID',
+  name: 'deviceId',
+  type: 'string',
+  required: true,
   displayOptions: {
     show: {
-      resource: ['delegates'],
-      operation: ['getDelegates'],
+      resource: ['pebbleTrackers'],
+      operation: ['getPebbleLocation'],
     },
   },
-  default: 50,
-  description: 'Maximum number of delegates to return',
+  default: '',
+  description: 'The Pebble device identifier',
 },
 {
-  displayName: 'Offset',
-  name: 'offset',
+  displayName: 'Timestamp',
+  name: 'timestamp',
   type: 'number',
+  required: true,
   displayOptions: {
     show: {
-      resource: ['delegates'],
-      operation: ['getDelegates'],
+      resource: ['pebbleTrackers'],
+      operation: ['getPebbleLocation'],
     },
   },
   default: 0,
-  description: 'Number of delegates to skip',
+  description: 'Unix timestamp for location data',
 },
 {
-  displayName: 'Delegate Name',
-  name: 'name',
+  displayName: 'Device ID',
+  name: 'deviceId',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['delegates'],
-      operation: ['getDelegate', 'getDelegateVotes'],
+      resource: ['pebbleTrackers'],
+      operation: ['getPebbleRewards'],
     },
   },
   default: '',
-  description: 'The name of the delegate',
+  description: 'The Pebble device identifier',
 },
 {
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['delegates'],
-      operation: ['getDelegateRankings'],
-    },
-  },
-  default: 50,
-  description: 'Maximum number of rankings to return',
-},
-{
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['staking'],
-      operation: ['getStakingBuckets'],
-    },
-  },
-  default: 100,
-  description: 'Maximum number of staking buckets to return',
-},
-{
-  displayName: 'Offset',
-  name: 'offset',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['staking'],
-      operation: ['getStakingBuckets'],
-    },
-  },
-  default: 0,
-  description: 'Number of staking buckets to skip',
-},
-{
-  displayName: 'Voter',
-  name: 'voter',
-  type: 'string',
-  displayOptions: {
-    show: {
-      resource: ['staking'],
-      operation: ['getStakingBuckets'],
-    },
-  },
-  default: '',
-  description: 'Filter by voter address',
-},
-{
-  displayName: 'Bucket ID',
-  name: 'id',
+  displayName: 'Device ID',
+  name: 'deviceId',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['staking'],
-      operation: ['getStakingBucket'],
+      resource: ['pebbleTrackers'],
+      operation: ['validatePebbleProof'],
     },
   },
   default: '',
-  description: 'The ID of the staking bucket to retrieve',
+  description: 'The Pebble device identifier',
 },
 {
-  displayName: 'Amount',
-  name: 'amount',
+  displayName: 'Proof Data',
+  name: 'proofData',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['pebbleTrackers'],
+      operation: ['validatePebbleProof'],
+    },
+  },
+  default: '',
+  description: 'JSON object containing the proof-of-presence data',
+},
+{
+  displayName: 'Project Action',
+  name: 'projectAction',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['w3bstreamProjects'],
+      operation: ['createProject'],
+    },
+  },
+  default: '{}',
+  description: 'The project creation action payload',
+},
+{
+  displayName: 'Project ID',
+  name: 'projectId',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['staking'],
-      operation: ['createStake'],
+      resource: ['w3bstreamProjects'],
+      operation: ['getProjectInfo', 'getProjectMetrics'],
     },
   },
   default: '',
-  description: 'The amount to stake (in IOTX)',
+  description: 'The ID of the W3bstream project',
 },
 {
-  displayName: 'Candidate',
-  name: 'candidate',
+  displayName: 'Owner Address',
+  name: 'ownerAddress',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['staking'],
-      operation: ['createStake'],
+      resource: ['w3bstreamProjects'],
+      operation: ['listProjects'],
     },
   },
   default: '',
-  description: 'The candidate address to stake to',
+  description: 'The address of the project owner',
 },
 {
-  displayName: 'Duration',
-  name: 'duration',
-  type: 'number',
+  displayName: 'Project Action',
+  name: 'projectAction',
+  type: 'json',
   required: true,
   displayOptions: {
     show: {
-      resource: ['staking'],
-      operation: ['createStake'],
+      resource: ['w3bstreamProjects'],
+      operation: ['updateProject'],
     },
   },
-  default: 91,
-  description: 'The staking duration in days',
+  default: '{}',
+  description: 'The project update action payload',
 },
 {
-  displayName: 'Bucket ID',
-  name: 'bucketId',
-  type: 'string',
+  displayName: 'Time Range',
+  name: 'timeRange',
+  type: 'json',
   required: true,
   displayOptions: {
     show: {
-      resource: ['staking'],
-      operation: ['unstake'],
+      resource: ['w3bstreamProjects'],
+      operation: ['getProjectMetrics'],
     },
   },
-  default: '',
-  description: 'The ID of the staking bucket to unstake',
+  default: '{}',
+  description: 'The time range for metrics query',
 },
-// No additional parameters - all operations require no parameters,
+{
+  displayName: 'Data Action',
+  name: 'dataAction',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['w3bstreamProjects'],
+      operation: ['processRealWorldData'],
+    },
+  },
+  default: '{}',
+  description: 'The real-world data processing action payload',
+},
     ],
   };
 
@@ -990,22 +1062,18 @@ export class IoTeX implements INodeType {
     const resource = this.getNodeParameter('resource', 0) as string;
 
     switch (resource) {
-      case 'accounts':
-        return [await executeAccountsOperations.call(this, items)];
-      case 'blocks':
-        return [await executeBlocksOperations.call(this, items)];
-      case 'transactions':
-        return [await executeTransactionsOperations.call(this, items)];
-      case 'actions':
-        return [await executeActionsOperations.call(this, items)];
+      case 'blockchainData':
+        return [await executeBlockchainDataOperations.call(this, items)];
       case 'smartContracts':
         return [await executeSmartContractsOperations.call(this, items)];
-      case 'delegates':
-        return [await executeDelegatesOperations.call(this, items)];
-      case 'staking':
-        return [await executeStakingOperations.call(this, items)];
-      case 'chainMetadata':
-        return [await executeChainMetadataOperations.call(this, items)];
+      case 'xrcTokens':
+        return [await executeXrcTokensOperations.call(this, items)];
+      case 'deviceRegistry':
+        return [await executeDeviceRegistryOperations.call(this, items)];
+      case 'pebbleTrackers':
+        return [await executePebbleTrackersOperations.call(this, items)];
+      case 'w3bstreamProjects':
+        return [await executeW3bstreamProjectsOperations.call(this, items)];
       default:
         throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not supported`);
     }
@@ -1016,7 +1084,7 @@ export class IoTeX implements INodeType {
 // Resource Handler Functions
 // ============================================================
 
-async function executeAccountsOperations(
+async function executeBlockchainDataOperations(
   this: IExecuteFunctions,
   items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
@@ -1027,16 +1095,135 @@ async function executeAccountsOperations(
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
-      const address = this.getNodeParameter('address', i) as string;
 
       switch (operation) {
+        case 'getChainMeta': {
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getChainMeta`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
+            },
+            body: {},
+            json: true,
+          };
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getBlockMetas': {
+          const byIndex = this.getNodeParameter('byIndex', i, {}) as any;
+          const byHash = this.getNodeParameter('byHash', i, '') as string;
+          const count = this.getNodeParameter('count', i, 1) as number;
+
+          let requestBody: any = {};
+
+          if (byHash) {
+            requestBody.byHash = {
+              blkHash: byHash,
+            };
+          } else if (byIndex.start) {
+            requestBody.byIndex = {
+              start: byIndex.start,
+              count: byIndex.count || count,
+            };
+          } else {
+            requestBody.byIndex = {
+              start: 1,
+              count: count,
+            };
+          }
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getBlockMetas`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
+            },
+            body: requestBody,
+            json: true,
+          };
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getActions': {
+          const byIndex = this.getNodeParameter('byIndex', i, {}) as any;
+          const byHash = this.getNodeParameter('byHash', i, '') as string;
+          const byAddr = this.getNodeParameter('byAddr', i, {}) as any;
+
+          let requestBody: any = {};
+
+          if (byHash) {
+            requestBody.byHash = {
+              actionHash: byHash,
+              checkPending: true,
+            };
+          } else if (byAddr.address) {
+            requestBody.byAddr = {
+              address: byAddr.address,
+              start: byAddr.start || 1,
+              count: byAddr.count || 10,
+            };
+          } else if (byIndex.start) {
+            requestBody.byIndex = {
+              start: byIndex.start,
+              count: byIndex.count || 10,
+            };
+          } else {
+            requestBody.byIndex = {
+              start: 1,
+              count: 10,
+            };
+          }
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getActions`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
+            },
+            body: requestBody,
+            json: true,
+          };
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getReceiptByAction': {
+          const actionHash = this.getNodeParameter('actionHash', i) as string;
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getReceiptByAction`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
+            },
+            body: {
+              actionHash: actionHash,
+            },
+            json: true,
+          };
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
         case 'getAccount': {
+          const address = this.getNodeParameter('address', i) as string;
+
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/accounts/${address}`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getAccount`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
               'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
+            },
+            body: {
+              address: address,
             },
             json: true,
           };
@@ -1044,13 +1231,22 @@ async function executeAccountsOperations(
           break;
         }
 
-        case 'getBalance': {
+        case 'getActionsFromAddress': {
+          const address = this.getNodeParameter('address', i) as string;
+          const start = this.getNodeParameter('start', i, 1) as number;
+          const count = this.getNodeParameter('count', i, 10) as number;
+
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/accounts/${address}/balance`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getActionsFromAddress`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
               'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
+            },
+            body: {
+              address: address,
+              start: start,
+              count: count,
             },
             json: true,
           };
@@ -1058,41 +1254,22 @@ async function executeAccountsOperations(
           break;
         }
 
-        case 'getAccountTransactions': {
-          const limit = this.getNodeParameter('limit', i, 100) as number;
-          const offset = this.getNodeParameter('offset', i, 0) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/accounts/${address}/transactions`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              limit,
-              offset,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+        case 'getActionsToAddress': {
+          const address = this.getNodeParameter('address', i) as string;
+          const start = this.getNodeParameter('start', i, 1) as number;
+          const count = this.getNodeParameter('count', i, 10) as number;
 
-        case 'getAccountActions': {
-          const limit = this.getNodeParameter('limit', i, 100) as number;
-          const offset = this.getNodeParameter('offset', i, 0) as number;
-          
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/accounts/${address}/actions`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/getActionsToAddress`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
               'Content-Type': 'application/json',
+              'X-API-Key': credentials.apiKey,
             },
-            qs: {
-              limit,
-              offset,
+            body: {
+              address: address,
+              start: start,
+              count: count,
             },
             json: true,
           };
@@ -1109,358 +1286,11 @@ async function executeAccountsOperations(
       if (this.continueOnFail()) {
         returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
       } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        }
-        throw new NodeOperationError(this.getNode(), error.message);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeBlocksOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getBlockByHeight': {
-          const height = this.getNodeParameter('height', i) as number;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/blocks/${height}`,
-            headers: {
-              'X-API-Key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockByHash': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/blocks/${hash}`,
-            headers: {
-              'X-API-Key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlocks': {
-          const limit = this.getNodeParameter('limit', i, 10) as number;
-          const offset = this.getNodeParameter('offset', i, 0) as number;
-          const start = this.getNodeParameter('start', i, undefined) as number | undefined;
-          const end = this.getNodeParameter('end', i, undefined) as number | undefined;
-
-          const queryParams: any = {
-            limit: limit.toString(),
-            offset: offset.toString(),
-          };
-
-          if (start !== undefined) {
-            queryParams.start = start.toString();
-          }
-          if (end !== undefined) {
-            queryParams.end = end.toString();
-          }
-
-          const queryString = new URLSearchParams(queryParams).toString();
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/blocks?${queryString}`,
-            headers: {
-              'X-API-Key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getLatestBlock': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/blocks/latest`,
-            headers: {
-              'X-API-Key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockTransactions': {
-          const height = this.getNodeParameter('height', i) as number;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/blocks/${height}/transactions`,
-            headers: {
-              'X-API-Key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
         throw new NodeApiError(this.getNode(), error);
       }
     }
   }
 
-  return returnData;
-}
-
-async function executeTransactionsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getTransaction': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/transactions/${hash}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getTransactions': {
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const address = this.getNodeParameter('address', i) as string;
-          
-          const queryParams: any = {};
-          if (limit) queryParams.limit = limit.toString();
-          if (offset) queryParams.offset = offset.toString();
-          if (address) queryParams.address = address;
-          
-          const queryString = Object.keys(queryParams).length > 0 
-            ? '?' + new URLSearchParams(queryParams).toString() 
-            : '';
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/transactions${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'sendTransaction': {
-          const signedTransaction = this.getNodeParameter('signedTransaction', i) as string;
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/transactions`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              signedTransaction: signedTransaction,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getTransactionReceipt': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/transactions/${hash}/receipt`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        }
-        throw new NodeOperationError(this.getNode(), error.message);
-      }
-    }
-  }
-  return returnData;
-}
-
-async function executeActionsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getAction': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/actions/${hash}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getActions': {
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const address = this.getNodeParameter('address', i) as string;
-          
-          const queryParams: any = {};
-          if (limit) queryParams.limit = limit;
-          if (offset) queryParams.offset = offset;
-          if (address) queryParams.address = address;
-          
-          const queryString = Object.keys(queryParams).length > 0 
-            ? '?' + new URLSearchParams(queryParams).toString()
-            : '';
-            
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/actions${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'sendAction': {
-          const actionData = this.getNodeParameter('action', i) as any;
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/actions`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: actionData,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getActionReceipt': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/actions/${hash}/receipt`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message || 'Unknown error occurred' }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        } else {
-          throw new NodeOperationError(this.getNode(), error.message || 'Unknown error occurred');
-        }
-      }
-    }
-  }
-  
   return returnData;
 }
 
@@ -1477,229 +1307,111 @@ async function executeSmartContractsOperations(
       let result: any;
       
       switch (operation) {
-        case 'callContract': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          const method = this.getNodeParameter('method', i) as string;
-          const params = this.getNodeParameter('params', i) as string;
+        case 'sendAction': {
+          const action = this.getNodeParameter('action', i) as any;
           
-          let parsedParams: any[] = [];
-          try {
-            parsedParams = JSON.parse(params);
-          } catch (error: any) {
-            throw new NodeOperationError(this.getNode(), 'Invalid JSON in params parameter');
-          }
-
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/api/contracts/call`,
+            url: `${credentials.baseUrl}/api/core/sendAction`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'X-API-KEY': credentials.apiKey,
               'Content-Type': 'application/json',
             },
             body: {
-              contractAddress,
-              method,
-              params: parsedParams,
+              action: typeof action === 'string' ? JSON.parse(action) : action,
             },
             json: true,
           };
-
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-
-        case 'executeContract': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          const method = this.getNodeParameter('method', i) as string;
-          const params = this.getNodeParameter('params', i) as string;
-          const gasLimit = this.getNodeParameter('gasLimit', i) as number;
+        
+        case 'estimateGasForAction': {
+          const action = this.getNodeParameter('action', i) as any;
           
-          let parsedParams: any[] = [];
-          try {
-            parsedParams = JSON.parse(params);
-          } catch (error: any) {
-            throw new NodeOperationError(this.getNode(), 'Invalid JSON in params parameter');
-          }
-
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/api/contracts/execute`,
+            url: `${credentials.baseUrl}/api/core/estimateGasForAction`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'X-API-KEY': credentials.apiKey,
               'Content-Type': 'application/json',
             },
             body: {
-              contractAddress,
-              method,
-              params: parsedParams,
-              gasLimit,
+              action: typeof action === 'string' ? JSON.parse(action) : action,
             },
             json: true,
           };
-
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-
-        case 'getContract': {
-          const address = this.getNodeParameter('address', i) as string;
-
+        
+        case 'readContract': {
+          const action = this.getNodeParameter('action', i) as any;
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'X-API-KEY': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: {
+              action: typeof action === 'string' ? JSON.parse(action) : action,
+            },
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        case 'suggestGasPrice': {
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/suggestGasPrice`,
+            headers: {
+              'X-API-KEY': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: {},
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        case 'getServerMeta': {
           const options: any = {
             method: 'GET',
-            url: `${credentials.baseUrl}/api/contracts/${address}`,
+            url: `${credentials.baseUrl}/api/core/getServerMeta`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'X-API-KEY': credentials.apiKey,
+              'Content-Type': 'application/json',
             },
             json: true,
           };
-
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-
-        case 'getContractABI': {
-          const address = this.getNodeParameter('address', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/contracts/${address}/abi`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
+        
         default:
           throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
       }
-
-      returnData.push({ 
+      
+      returnData.push({
         json: result,
-        pairedItem: { item: i }
+        pairedItem: { item: i },
       });
-
+      
     } catch (error: any) {
       if (this.continueOnFail()) {
         returnData.push({
           json: { error: error.message },
-          pairedItem: { item: i }
-        });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        } else {
-          throw new NodeOperationError(this.getNode(), error.message);
-        }
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeDelegatesOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getDelegates': {
-          const limit = this.getNodeParameter('limit', i, 50) as number;
-          const offset = this.getNodeParameter('offset', i, 0) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/delegates`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              limit,
-              offset,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getDelegate': {
-          const name = this.getNodeParameter('name', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/delegates/${encodeURIComponent(name)}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getDelegateVotes': {
-          const name = this.getNodeParameter('name', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/delegates/${encodeURIComponent(name)}/votes`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getDelegateRankings': {
-          const limit = this.getNodeParameter('limit', i, 50) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/delegates/rankings`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              limit,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
+          pairedItem: { item: i },
         });
       } else {
         if (error.httpCode) {
@@ -1713,7 +1425,7 @@ async function executeDelegatesOperations(
   return returnData;
 }
 
-async function executeStakingOperations(
+async function executeXrcTokensOperations(
   this: IExecuteFunctions,
   items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
@@ -1726,93 +1438,138 @@ async function executeStakingOperations(
       let result: any;
 
       switch (operation) {
-        case 'getStakingBuckets': {
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const voter = this.getNodeParameter('voter', i) as string;
+        case 'getTokenBalance': {
+          const address = this.getNodeParameter('address', i) as string;
+          
+          const options: any = {
+            method: 'GET',
+            url: `${credentials.baseUrl}/api/core/getAccount`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            qs: {
+              address: address,
+            },
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
 
-          const queryParams: any = {
-            limit: limit.toString(),
-            offset: offset.toString(),
+        case 'readTokenContract': {
+          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+          const method = this.getNodeParameter('method', i) as string;
+          const params = this.getNodeParameter('params', i) as any;
+          
+          const requestBody: any = {
+            execution: {
+              contract: contractAddress,
+              data: '',
+            },
+            callerAddress: contractAddress,
           };
 
-          if (voter) {
-            queryParams.voter = voter;
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: requestBody,
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'transferTokens': {
+          const signedAction = this.getNodeParameter('signedAction', i) as any;
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: {
+              action: signedAction,
+            },
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getTokenMetadata': {
+          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+          
+          const metadataRequests = [
+            { method: 'name' },
+            { method: 'symbol' },
+            { method: 'decimals' },
+          ];
+
+          const results: any = {};
+
+          for (const request of metadataRequests) {
+            const options: any = {
+              method: 'POST',
+              url: `${credentials.baseUrl}/api/core/readContract`,
+              headers: {
+                'Authorization': `Bearer ${credentials.apiKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: {
+                execution: {
+                  contract: contractAddress,
+                  data: '',
+                },
+                callerAddress: contractAddress,
+              },
+              json: true,
+            };
+
+            try {
+              const response = await this.helpers.httpRequest(options) as any;
+              results[request.method] = response;
+            } catch (error: any) {
+              results[request.method] = null;
+            }
           }
 
-          const queryString = new URLSearchParams(queryParams).toString();
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/staking/buckets?${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
+          result = {
+            contractAddress,
+            metadata: results,
           };
-
-          result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getStakingBucket': {
-          const id = this.getNodeParameter('id', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/staking/buckets/${id}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'createStake': {
-          const amount = this.getNodeParameter('amount', i) as string;
-          const candidate = this.getNodeParameter('candidate', i) as string;
-          const duration = this.getNodeParameter('duration', i) as number;
-
+        case 'getTokenSupply': {
+          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+          
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/api/staking/stake`,
+            url: `${credentials.baseUrl}/api/core/readContract`,
             headers: {
               'Authorization': `Bearer ${credentials.apiKey}`,
               'Content-Type': 'application/json',
             },
-            json: true,
             body: {
-              amount,
-              candidate,
-              duration,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'unstake': {
-          const bucketId = this.getNodeParameter('bucketId', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/staking/unstake`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
+              execution: {
+                contract: contractAddress,
+                data: '',
+              },
+              callerAddress: contractAddress,
             },
             json: true,
-            body: {
-              bucketId,
-            },
           };
-
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
@@ -1822,11 +1579,12 @@ async function executeStakingOperations(
       }
 
       returnData.push({ json: result, pairedItem: { item: i } });
+
     } catch (error: any) {
       if (this.continueOnFail()) {
         returnData.push({ 
-          json: { error: error.message },
-          pairedItem: { item: i }
+          json: { error: error.message }, 
+          pairedItem: { item: i } 
         });
       } else {
         throw new NodeApiError(this.getNode(), error);
@@ -1837,7 +1595,173 @@ async function executeStakingOperations(
   return returnData;
 }
 
-async function executeChainMetadataOperations(
+async function executeDeviceRegistryOperations(
+  this: IExecuteFunctions,
+  items: INodeExecutionData[],
+): Promise<INodeExecutionData[]> {
+  const returnData: INodeExecutionData[] = [];
+  const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('iotexApi') as any;
+
+  for (let i = 0; i < items.length; i++) {
+    try {
+      let result: any;
+
+      switch (operation) {
+        case 'registerDevice': {
+          const deviceAction = this.getNodeParameter('deviceAction', i) as any;
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': credentials.apiKey,
+            },
+            body: {
+              action: deviceAction,
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getDeviceInfo': {
+          const deviceId = this.getNodeParameter('deviceId', i) as string;
+          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+          const methodName = this.getNodeParameter('methodName', i, 'getDevice') as string;
+          const methodParams = this.getNodeParameter('methodParams', i, [deviceId]) as any[];
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': credentials.apiKey,
+            },
+            body: {
+              contractAddress,
+              method: methodName,
+              params: methodParams,
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'listDevices': {
+          const ownerAddress = this.getNodeParameter('ownerAddress', i) as string;
+          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+          const methodName = this.getNodeParameter('methodName', i, 'getDevicesByOwner') as string;
+          const methodParams = this.getNodeParameter('methodParams', i, [ownerAddress]) as any[];
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': credentials.apiKey,
+            },
+            body: {
+              contractAddress,
+              method: methodName,
+              params: methodParams,
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'updateDeviceStatus': {
+          const deviceAction = this.getNodeParameter('deviceAction', i) as any;
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': credentials.apiKey,
+            },
+            body: {
+              action: deviceAction,
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getDeviceMetrics': {
+          const deviceId = this.getNodeParameter('deviceId', i) as string;
+          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+          const timeRange = this.getNodeParameter('timeRange', i, {}) as any;
+          const methodName = this.getNodeParameter('methodName', i, 'getDeviceMetrics') as string;
+          
+          const methodParams = this.getNodeParameter('methodParams', i, [
+            deviceId,
+            timeRange.start || 0,
+            timeRange.end || Math.floor(Date.now() / 1000),
+          ]) as any[];
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': credentials.apiKey,
+            },
+            body: {
+              contractAddress,
+              method: methodName,
+              params: methodParams,
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        default:
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+      }
+
+      returnData.push({ 
+        json: {
+          operation,
+          success: true,
+          data: result,
+        }, 
+        pairedItem: { item: i },
+      });
+
+    } catch (error: any) {
+      if (this.continueOnFail()) {
+        returnData.push({ 
+          json: { 
+            operation,
+            success: false,
+            error: error.message,
+          }, 
+          pairedItem: { item: i },
+        });
+      } else {
+        throw new NodeApiError(this.getNode(), error);
+      }
+    }
+  }
+
+  return returnData;
+}
+
+async function executePebbleTrackersOperations(
   this: IExecuteFunctions,
   items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
@@ -1850,58 +1774,282 @@ async function executeChainMetadataOperations(
       let result: any;
       
       switch (operation) {
-        case 'getChainMetadata': {
+        case 'getPebbleData': {
+          const deviceId = this.getNodeParameter('deviceId', i) as string;
+          const dataType = this.getNodeParameter('dataType', i) as string;
+          const timeRange = this.getNodeParameter('timeRange', i) as string;
+          
+          const contractData = {
+            contractAddress: 'pebble-data-contract',
+            abi: 'getPebbleData',
+            method: 'getPebbleData',
+            args: [deviceId, dataType, timeRange],
+          };
+          
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/chainmeta`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
             headers: {
               'Authorization': `Bearer ${credentials.apiKey}`,
               'Content-Type': 'application/json',
             },
+            body: contractData,
             json: true,
           };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        case 'submitPebbleData': {
+          const dataAction = this.getNodeParameter('dataAction', i) as any;
+          
+          const actionData = {
+            action: dataAction,
+            gasLimit: '100000',
+            gasPrice: '1000000000',
+          };
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: actionData,
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        case 'getPebbleLocation': {
+          const deviceId = this.getNodeParameter('deviceId', i) as string;
+          const timestamp = this.getNodeParameter('timestamp', i) as number;
+          
+          const contractData = {
+            contractAddress: 'pebble-location-contract',
+            abi: 'getPebbleLocation',
+            method: 'getPebbleLocation',
+            args: [deviceId, timestamp.toString()],
+          };
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: contractData,
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        case 'getPebbleRewards': {
+          const deviceId = this.getNodeParameter('deviceId', i) as string;
+          
+          const contractData = {
+            contractAddress: 'pebble-rewards-contract',
+            abi: 'getPebbleRewards',
+            method: 'getPebbleRewards',
+            args: [deviceId],
+          };
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: contractData,
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        case 'validatePebbleProof': {
+          const deviceId = this.getNodeParameter('deviceId', i) as string;
+          const proofData = this.getNodeParameter('proofData', i) as any;
+          
+          const contractData = {
+            contractAddress: 'pebble-proof-contract',
+            abi: 'validatePebbleProof',
+            method: 'validatePebbleProof',
+            args: [deviceId, JSON.stringify(proofData)],
+          };
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: contractData,
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+        
+        default:
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+      }
+      
+      returnData.push({ json: result, pairedItem: { item: i } });
+    } catch (error: any) {
+      if (this.continueOnFail()) {
+        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
+      } else {
+        throw new NodeApiError(this.getNode(), error);
+      }
+    }
+  }
+  
+  return returnData;
+}
+
+async function executeW3bstreamProjectsOperations(
+  this: IExecuteFunctions,
+  items: INodeExecutionData[],
+): Promise<INodeExecutionData[]> {
+  const returnData: INodeExecutionData[] = [];
+  const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('iotexApi') as any;
+
+  for (let i = 0; i < items.length; i++) {
+    try {
+      let result: any;
+
+      switch (operation) {
+        case 'createProject': {
+          const projectAction = this.getNodeParameter('projectAction', i) as any;
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
+            headers: {
+              'X-API-KEY': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: projectAction,
+            json: true,
+          };
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getChainStats': {
+        case 'getProjectInfo': {
+          const projectId = this.getNodeParameter('projectId', i) as string;
+          
+          const requestBody = {
+            projectId,
+          };
+          
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/stats`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'X-API-KEY': credentials.apiKey,
               'Content-Type': 'application/json',
             },
+            body: requestBody,
             json: true,
           };
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getNetworkInfo': {
+        case 'listProjects': {
+          const ownerAddress = this.getNodeParameter('ownerAddress', i) as string;
+          
+          const requestBody = {
+            ownerAddress,
+          };
+          
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/network`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'X-API-KEY': credentials.apiKey,
               'Content-Type': 'application/json',
             },
+            body: requestBody,
             json: true,
           };
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getCurrentEpoch': {
+        case 'updateProject': {
+          const projectAction = this.getNodeParameter('projectAction', i) as any;
+          
           const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/epoch`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'X-API-KEY': credentials.apiKey,
               'Content-Type': 'application/json',
             },
+            body: projectAction,
             json: true,
           };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getProjectMetrics': {
+          const projectId = this.getNodeParameter('projectId', i) as string;
+          const timeRange = this.getNodeParameter('timeRange', i) as any;
+          
+          const requestBody = {
+            projectId,
+            timeRange,
+          };
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/readContract`,
+            headers: {
+              'X-API-KEY': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: requestBody,
+            json: true,
+          };
+          
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'processRealWorldData': {
+          const dataAction = this.getNodeParameter('dataAction', i) as any;
+          
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/core/sendAction`,
+            headers: {
+              'X-API-KEY': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: dataAction,
+            json: true,
+          };
+          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
@@ -1910,22 +2058,15 @@ async function executeChainMetadataOperations(
           throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
       }
 
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
+      returnData.push({ json: result, pairedItem: { item: i } });
     } catch (error: any) {
       if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
+        returnData.push({ 
+          json: { error: error.message }, 
+          pairedItem: { item: i } 
         });
       } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        }
-        throw new NodeOperationError(this.getNode(), error.message);
+        throw new NodeApiError(this.getNode(), error);
       }
     }
   }

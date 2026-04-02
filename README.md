@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-This n8n community node provides seamless integration with the IoTeX blockchain ecosystem, offering 6 comprehensive resources for blockchain data retrieval, smart contract interactions, XRC token management, device registry operations, Pebble tracker integration, and W3bstream project management.
+A comprehensive n8n community node for IoTeX blockchain interactions. Provides 6 core resources with full support for account management, block exploration, action tracking, smart contract interactions, analytics queries, and delegate operations on the IoTeX network.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
 ![IoTeX](https://img.shields.io/badge/IoTeX-Blockchain-green)
-![DePIN](https://img.shields.io/badge/DePIN-Enabled-orange)
-![Web3](https://img.shields.io/badge/Web3-Integration-purple)
+![Web3](https://img.shields.io/badge/Web3-Integration-orange)
+![DeFi](https://img.shields.io/badge/DeFi-Ready-purple)
 
 ## Features
 
-- **Blockchain Data Access** - Query blocks, transactions, and account information from the IoTeX mainnet and testnet
-- **Smart Contract Integration** - Deploy, execute, and monitor smart contracts with full ABI support
-- **XRC Token Management** - Handle XRC-20 and XRC-721 tokens including transfers, balances, and metadata
-- **Device Registry Operations** - Manage IoT device registration, verification, and lifecycle operations
-- **Pebble Tracker Support** - Access real-world data from Pebble IoT devices and sensors
-- **W3bstream Projects** - Create and manage decentralized data processing workflows
-- **Multi-Network Support** - Compatible with IoTeX mainnet, testnet, and private networks
-- **Real-time Monitoring** - Subscribe to blockchain events and device data streams
+- **Account Management** - Query account balances, transaction history, and metadata
+- **Block Exploration** - Retrieve block information, transactions, and chain statistics
+- **Action Tracking** - Monitor and query blockchain actions and transactions
+- **Smart Contract Integration** - Execute contract calls and retrieve contract data
+- **Analytics & Metrics** - Access comprehensive blockchain analytics and statistics
+- **Delegate Operations** - Interact with IoTeX consensus delegates and staking
+- **Real-time Data** - Live blockchain data with automatic updates
+- **Error Resilience** - Comprehensive error handling with retry mechanisms
 
 ## Installation
 
@@ -61,124 +61,109 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your IoTeX API key for authenticated requests | Yes |
-| Network | Target network (mainnet, testnet, or custom) | Yes |
-| Base URL | Custom RPC endpoint (optional for private networks) | No |
-| Private Key | Wallet private key for transaction signing | No |
+| API Key | IoTeX API access key for authenticated requests | Yes |
+| Network | IoTeX network (mainnet/testnet) | Yes |
+| Endpoint URL | Custom RPC endpoint (optional) | No |
 
 ## Resources & Operations
 
-### 1. BlockchainData
+### 1. Account
 
 | Operation | Description |
 |-----------|-------------|
-| Get Block | Retrieve block information by height or hash |
-| Get Transaction | Fetch transaction details and receipt |
-| Get Account | Query account balance and transaction history |
-| Get Chain Info | Retrieve blockchain metadata and statistics |
-| List Transactions | Get paginated transaction lists with filters |
+| Get Balance | Retrieve account IOTX balance and token holdings |
+| Get Metadata | Fetch account information and transaction counts |
+| List Actions | Get transaction history for specific account |
+| Get Nonce | Retrieve current account nonce for transactions |
 
-### 2. SmartContracts
-
-| Operation | Description |
-|-----------|-------------|
-| Deploy Contract | Deploy new smart contracts to the blockchain |
-| Call Method | Execute read-only contract methods |
-| Send Transaction | Execute state-changing contract methods |
-| Get Contract Info | Retrieve contract ABI and metadata |
-| Monitor Events | Subscribe to contract event emissions |
-| Estimate Gas | Calculate gas requirements for transactions |
-
-### 3. XrcTokens
+### 2. Block
 
 | Operation | Description |
 |-----------|-------------|
-| Get Balance | Check XRC-20 token balances for addresses |
-| Transfer Tokens | Send XRC-20 tokens between addresses |
-| Get Token Info | Retrieve token metadata and supply information |
-| List Holdings | Get all token holdings for an address |
-| Get NFT Metadata | Fetch XRC-721 token metadata and attributes |
-| Transfer NFT | Transfer XRC-721 tokens between addresses |
+| Get by Height | Retrieve block information by block number |
+| Get by Hash | Fetch block details using block hash |
+| Get Latest | Get the most recent block information |
+| List Blocks | Retrieve multiple blocks with pagination |
+| Get Transactions | List all transactions within a specific block |
 
-### 4. DeviceRegistry
-
-| Operation | Description |
-|-----------|-------------|
-| Register Device | Add new IoT devices to the registry |
-| Update Device | Modify device information and status |
-| Get Device Info | Retrieve device details and verification status |
-| List Devices | Query devices with filters and pagination |
-| Verify Device | Perform device identity verification |
-| Deactivate Device | Remove or suspend device registrations |
-
-### 5. PebbleTrackers
+### 3. Action
 
 | Operation | Description |
 |-----------|-------------|
-| Get Sensor Data | Retrieve latest sensor readings from Pebble devices |
-| Get Historical Data | Query historical sensor data with time ranges |
-| List Active Devices | Get all active Pebble trackers in the network |
-| Get Device Status | Check connectivity and health status |
-| Configure Device | Update device settings and data collection parameters |
-| Export Data | Download sensor data in various formats |
+| Get by Hash | Retrieve action details by transaction hash |
+| List by Address | Get actions associated with specific address |
+| List by Block | Fetch all actions within a block range |
+| Get Receipt | Retrieve transaction receipt and execution results |
+| Search Actions | Query actions with advanced filtering options |
 
-### 6. W3bstreamProjects
+### 4. Contract
 
 | Operation | Description |
 |-----------|-------------|
-| Create Project | Initialize new W3bstream data processing projects |
-| Deploy Logic | Upload and deploy data processing logic |
-| Get Project Status | Monitor project execution and performance |
-| Update Configuration | Modify project settings and parameters |
-| List Projects | Retrieve all projects with filtering options |
-| Delete Project | Remove projects and associated resources |
+| Call Method | Execute read-only contract method calls |
+| Get ABI | Retrieve contract Application Binary Interface |
+| Get Code | Fetch deployed contract bytecode |
+| List Events | Query contract event logs with filtering |
+| Get Storage | Access contract storage state variables |
+
+### 5. Analytics
+
+| Operation | Description |
+|-----------|-------------|
+| Get Chain Stats | Retrieve overall blockchain statistics |
+| Get Market Data | Fetch IOTX price and market information |
+| Get Network Health | Monitor network performance metrics |
+| Get Validator Stats | Access validator and consensus statistics |
+| Get Token Metrics | Analyze token distribution and economics |
+
+### 6. Delegate
+
+| Operation | Description |
+|-----------|-------------|
+| List All | Retrieve all consensus delegates and candidates |
+| Get by Name | Fetch specific delegate information |
+| Get Rewards | Query delegate rewards and distribution |
+| Get Voters | List delegate voters and voting power |
+| Get Rankings | Access delegate performance rankings |
 
 ## Usage Examples
 
 ```javascript
-// Get latest block information
+// Get account balance
 {
-  "resource": "BlockchainData",
-  "operation": "Get Block",
-  "height": "latest"
+  "resource": "Account",
+  "operation": "Get Balance",
+  "address": "io1qyqsyqcy8uhx9jtdc2xp5wx7nxyq3xf4c3jmxknzkuej8y"
 }
 ```
 
 ```javascript
-// Transfer XRC-20 tokens
+// Query latest block information
 {
-  "resource": "XrcTokens", 
-  "operation": "Transfer Tokens",
-  "contractAddress": "io1hp6y4eqr90j7tmul4w2wa8pm7wx462hq0mg4tw",
-  "to": "io1uqhmnttmv0pg8prugxxn7d8ex9angrvfjrqrcd",
-  "amount": "100000000000000000000",
-  "privateKey": "{{ $credentials.privateKey }}"
+  "resource": "Block",
+  "operation": "Get Latest",
+  "includeTransactions": true
 }
 ```
 
 ```javascript
-// Register IoT device
+// Execute smart contract call
 {
-  "resource": "DeviceRegistry",
-  "operation": "Register Device",
-  "deviceId": "PEBBLE_001",
-  "deviceType": "environmental_sensor",
-  "owner": "io1uqhmnttmv0pg8prugxxn7d8ex9angrvfjrqrcd",
-  "metadata": {
-    "location": "San Francisco",
-    "model": "PebbleGo"
-  }
+  "resource": "Contract",
+  "operation": "Call Method",
+  "contractAddress": "io1hp6y4eqr90j7tmul4w2wa8pm7wx462hq0mg4tw0lcctu9c",
+  "method": "balanceOf",
+  "parameters": ["io1qyqsyqcy8uhx9jtdc2xp5wx7nxyq3xf4c3jmxknzkuej8y"]
 }
 ```
 
 ```javascript
-// Get Pebble sensor data
+// Get delegate rankings
 {
-  "resource": "PebbleTrackers",
-  "operation": "Get Sensor Data",
-  "deviceId": "PEBBLE_001",
-  "dataTypes": ["temperature", "humidity", "location"],
-  "limit": 100
+  "resource": "Delegate",
+  "operation": "Get Rankings",
+  "limit": 50,
+  "offset": 0
 }
 ```
 
@@ -186,12 +171,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and active |
-| Insufficient Gas | Transaction failed due to low gas limit | Increase gas limit or check account balance |
-| Contract Not Found | Smart contract address does not exist | Verify contract address and network |
-| Device Not Registered | Attempted operation on unregistered device | Register device first or check device ID |
-| Network Timeout | Request exceeded timeout limit | Check network connectivity and retry |
-| Invalid Transaction | Transaction parameters are malformed | Validate all required fields and formats |
+| Invalid API Key | Authentication failed with provided credentials | Verify API key and network configuration |
+| Rate Limit Exceeded | Too many requests sent to IoTeX API | Implement request delays or upgrade API plan |
+| Invalid Address Format | Provided address doesn't match IoTeX format | Ensure address starts with 'io1' and has correct length |
+| Block Not Found | Requested block height or hash doesn't exist | Verify block number is within valid range |
+| Contract Call Failed | Smart contract execution returned error | Check contract address, method name, and parameters |
+| Network Timeout | Request timed out waiting for response | Retry request or check network connectivity |
 
 ## Development
 
@@ -236,5 +221,5 @@ Contributions are welcome! Please ensure:
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-iotex/issues)
-- **IoTeX Documentation**: [docs.iotex.io](https://docs.iotex.io)
-- **IoTeX Developer Portal**: [developers.iotex.io](https://developers.iotex.io)
+- **IoTeX Documentation**: [IoTeX Developer Portal](https://docs.iotex.io/)
+- **IoTeX Community**: [IoTeX Discord](https://discord.gg/iotex)

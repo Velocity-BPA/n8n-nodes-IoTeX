@@ -52,20 +52,28 @@ export class IoTeX implements INodeType {
             value: 'account',
           },
           {
-            name: 'Block',
-            value: 'block',
-          },
-          {
             name: 'Action',
             value: 'action',
           },
           {
-            name: 'Contract',
-            value: 'contract',
+            name: 'Block',
+            value: 'block',
+          },
+          {
+            name: 'Token',
+            value: 'token',
           },
           {
             name: 'Analytics',
             value: 'analytics',
+          },
+          {
+            name: 'Staking',
+            value: 'staking',
+          },
+          {
+            name: 'Contract',
+            value: 'contract',
           },
           {
             name: 'Delegate',
@@ -105,9 +113,11 @@ export class IoTeX implements INodeType {
   noDataExpression: true,
   displayOptions: { show: { resource: ['account'] } },
   options: [
-    { name: 'Get Account', value: 'getAccount', description: 'Get account information including balance and nonce', action: 'Get account information' },
-    { name: 'Send Raw Action', value: 'sendRawAction', description: 'Send signed action to blockchain', action: 'Send signed action' },
-    { name: 'Get Account Meta', value: 'getAccountMeta', description: 'Get account metadata', action: 'Get account metadata' }
+    { name: 'Get Account', value: 'getAccount', description: 'Get account details by address', action: 'Get account details' },
+    { name: 'Get Account Balance', value: 'getAccountBalance', description: 'Get account balance', action: 'Get account balance' },
+    { name: 'Get Account Metadata', value: 'getAccountMeta', description: 'Get account metadata including nonce', action: 'Get account metadata' },
+    { name: 'Get Account Actions', value: 'getAccountActions', description: 'Get actions associated with an account', action: 'Get account actions' },
+    { name: 'Send Raw Action', value: 'sendRawAction', description: 'Send signed action to blockchain', action: 'Send signed action' }
   ],
   default: 'getAccount',
 },
@@ -116,36 +126,31 @@ export class IoTeX implements INodeType {
   name: 'operation',
   type: 'options',
   noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['block'],
-    },
-  },
+  displayOptions: { show: { resource: ['action'] } },
   options: [
-    {
-      name: 'Get Block Metas',
-      value: 'getBlockMetas',
-      description: 'Get block metadata by height range',
-      action: 'Get block metas',
-    },
-    {
-      name: 'Get Chain Meta',
-      value: 'getChainMeta',
-      description: 'Get blockchain metadata and latest block info',
-      action: 'Get chain meta',
-    },
-    {
-      name: 'Get Block By Height',
-      value: 'getBlockByHeight',
-      description: 'Get block details by height',
-      action: 'Get block by height',
-    },
-    {
-      name: 'Get Block By Hash',
-      value: 'getBlockByHash',
-      description: 'Get block details by hash',
-      action: 'Get block by hash',
-    },
+    { name: 'Get Actions', value: 'getActions', description: 'Get actions by hash, address or block', action: 'Get actions' },
+    { name: 'Get Action By Hash', value: 'getActionByHash', description: 'Get specific action by hash', action: 'Get action by hash' },
+    { name: 'Get Actions By Address', value: 'getActionsByAddress', description: 'Get actions by address with pagination', action: 'Get actions by address' },
+    { name: 'Get Actions By Block', value: 'getActionsByBlock', description: 'Get actions in a specific block', action: 'Get actions by block' },
+    { name: 'Get Unconfirmed Actions By Address', value: 'getUnconfirmedActionsByAddress', description: 'Get pending actions for address', action: 'Get unconfirmed actions by address' },
+    { name: 'Estimate Gas', value: 'estimateGas', description: 'Estimate gas for action execution', action: 'Estimate gas consumption' },
+    { name: 'Suggest Gas Price', value: 'suggestGasPrice', description: 'Get suggested gas price', action: 'Suggest gas price' }
+  ],
+  default: 'getActions',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['block'] } },
+  options: [
+    { name: 'Get Block Metas', value: 'getBlockMetas', description: 'Get block metadata by index or hash', action: 'Get block metadata' },
+    { name: 'Get Blocks', value: 'getBlocks', description: 'Get raw block data', action: 'Get raw block data' },
+    { name: 'Get Chain Meta', value: 'getChainMeta', description: 'Get latest blockchain tip information', action: 'Get chain metadata' },
+    { name: 'Suggest Gas Price', value: 'suggestGasPrice', description: 'Get suggested gas price for transactions', action: 'Get suggested gas price' },
+    { name: 'Get Block By Height', value: 'getBlockByHeight', description: 'Get block details by height', action: 'Get block by height' },
+    { name: 'Get Block By Hash', value: 'getBlockByHash', description: 'Get block details by hash', action: 'Get block by hash' }
   ],
   default: 'getBlockMetas',
 },
@@ -154,38 +159,70 @@ export class IoTeX implements INodeType {
 	name: 'operation',
 	type: 'options',
 	noDataExpression: true,
+	displayOptions: { show: { resource: ['token'] } },
+	options: [
+		{ name: 'Get Token Balance', value: 'getTokenBalance', description: 'Get XRC20 token balance for address', action: 'Get token balance' },
+		{ name: 'Get Token Metadata', value: 'getTokenMetadata', description: 'Get token contract metadata', action: 'Get token metadata' },
+		{ name: 'Get Token Transfers', value: 'getTokenTransfers', description: 'Get token transfer history', action: 'Get token transfers' },
+		{ name: 'Get Token Holders', value: 'getTokenHolders', description: 'Get token holder information', action: 'Get token holders' }
+	],
+	default: 'getTokenBalance',
+},
+{
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
 	displayOptions: {
 		show: {
-			resource: ['action'],
+			resource: ['analytics'],
 		},
 	},
 	options: [
 		{
-			name: 'Get Actions',
-			value: 'getActions',
-			description: 'Get actions by block height or address',
-			action: 'Get actions',
+			name: 'Get Chain Statistics',
+			value: 'getChainMeta',
+			description: 'Get chain statistics and metadata',
+			action: 'Get chain statistics',
 		},
 		{
-			name: 'Get Action by Hash',
-			value: 'getActionByHash',
-			description: 'Get specific action by hash',
-			action: 'Get action by hash',
+			name: 'Get Delegates',
+			value: 'readCandidates',
+			description: 'Get delegate/validator information',
+			action: 'Get delegates',
 		},
 		{
-			name: 'Estimate Gas',
-			value: 'estimateGas',
-			description: 'Estimate gas for action execution',
-			action: 'Estimate gas consumption',
+			name: 'Get Epoch Data',
+			value: 'getEpochMeta',
+			description: 'Get epoch and productivity data',
+			action: 'Get epoch data',
 		},
 		{
-			name: 'Suggest Gas Price',
-			value: 'suggestGasPrice',
-			description: 'Get suggested gas price',
-			action: 'Suggest gas price',
+			name: 'Get Staking Rewards',
+			value: 'getAccount',
+			description: 'Get staking rewards information',
+			action: 'Get staking rewards',
 		},
+    { name: 'Get Buckets', value: 'getBuckets', description: 'Get staking bucket analytics', action: 'Get staking bucket analytics' },
+    { name: 'Get Rewards', value: 'getRewards', description: 'Get reward distribution data', action: 'Get reward distribution data' },
+    { name: 'Get Action Analytics', value: 'getActionAnalytics', description: 'Get action statistics', action: 'Get action statistics' },
+    { name: 'Get Chain Stats', value: 'getChainStats', description: 'Get overall blockchain statistics', action: 'Get blockchain statistics' }
 	],
-	default: 'getActions',
+	default: 'getChainMeta',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['staking'] } },
+  options: [
+    { name: 'Get Staking Buckets', value: 'getBuckets', description: 'Get staking buckets information', action: 'Get staking buckets' },
+    { name: 'Get Candidates', value: 'getCandidates', description: 'Get candidate delegate information', action: 'Get candidate delegates' },
+    { name: 'Get Voter Buckets', value: 'getVoterBuckets', description: 'Get voting buckets for specific voter', action: 'Get voter buckets' },
+    { name: 'Get Candidate Buckets', value: 'getCandidateBuckets', description: 'Get buckets voting for specific candidate', action: 'Get candidate buckets' },
+  ],
+  default: 'getBuckets',
 },
 {
   displayName: 'Operation',
@@ -200,20 +237,6 @@ export class IoTeX implements INodeType {
     { name: 'Get Contract Meta', value: 'getContractMeta', description: 'Get contract metadata', action: 'Get contract meta' }
   ],
   default: 'readContractStorage',
-},
-{
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: { show: { resource: ['analytics'] } },
-  options: [
-    { name: 'Get Buckets', value: 'getBuckets', description: 'Get staking bucket analytics', action: 'Get staking bucket analytics' },
-    { name: 'Get Rewards', value: 'getRewards', description: 'Get reward distribution data', action: 'Get reward distribution data' },
-    { name: 'Get Action Analytics', value: 'getActionAnalytics', description: 'Get action statistics', action: 'Get action statistics' },
-    { name: 'Get Chain Stats', value: 'getChainStats', description: 'Get overall blockchain statistics', action: 'Get blockchain statistics' }
-  ],
-  default: 'getBuckets',
 },
 {
   displayName: 'Operation',
@@ -516,9 +539,14 @@ export class IoTeX implements INodeType {
   name: 'address',
   type: 'string',
   required: true,
-  displayOptions: { show: { resource: ['account'], operation: ['getAccount'] } },
+  displayOptions: { 
+    show: { 
+      resource: ['account'],
+      operation: ['getAccount', 'getAccountBalance', 'getAccountMeta', 'getAccountActions', 'sendRawAction']
+    }
+  },
   default: '',
-  description: 'The IoTeX account address to get information for',
+  description: 'The IoTeX account address (hexadecimal format)',
 },
 {
   displayName: 'Data',
@@ -530,13 +558,229 @@ export class IoTeX implements INodeType {
   description: 'Hex-encoded signed action data to send to the blockchain',
 },
 {
+  displayName: 'Start Index',
+  name: 'start',
+  type: 'number',
+  required: false,
+  displayOptions: { 
+    show: { 
+      resource: ['account'],
+      operation: ['getAccountActions']
+    }
+  },
+  default: 0,
+  description: 'The starting index for pagination',
+},
+{
+  displayName: 'Count',
+  name: 'count',
+  type: 'number',
+  required: false,
+  displayOptions: { 
+    show: { 
+      resource: ['account'],
+      operation: ['getAccountActions']
+    }
+  },
+  default: 10,
+  description: 'The number of actions to retrieve',
+},
+{
+  displayName: 'By Hash',
+  name: 'byHash',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActions'],
+    },
+  },
+  default: '',
+  description: 'Action hash to search by (hex format)',
+},
+{
+  displayName: 'By Address',
+  name: 'byAddr',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActions'],
+    },
+  },
+  default: '',
+  description: 'Address to search actions for',
+},
+{
+  displayName: 'By Block',
+  name: 'byBlk',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActions'],
+    },
+  },
+  default: '',
+  description: 'Block hash to search actions in',
+},
+{
+  displayName: 'Action Hash',
+  name: 'actionHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActionByHash'],
+    },
+  },
+  default: '',
+  description: 'The hash of the action to retrieve',
+},
+{
+  displayName: 'Check Pending',
+  name: 'checkingPending',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActionByHash'],
+    },
+  },
+  default: false,
+  description: 'Whether to check pending actions',
+},
+{
   displayName: 'Address',
   name: 'address',
   type: 'string',
   required: true,
-  displayOptions: { show: { resource: ['account'], operation: ['getAccountMeta'] } },
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActionsByAddress', 'getUnconfirmedActionsByAddress'],
+    },
+  },
   default: '',
-  description: 'The IoTeX account address to get metadata for',
+  description: 'The address to get actions for',
+},
+{
+  displayName: 'Start',
+  name: 'start',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActionsByAddress', 'getActionsByBlock', 'getUnconfirmedActionsByAddress'],
+    },
+  },
+  default: 0,
+  description: 'Start index for pagination',
+},
+{
+  displayName: 'Count',
+  name: 'count',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActionsByAddress', 'getActionsByBlock', 'getUnconfirmedActionsByAddress'],
+    },
+  },
+  default: 10,
+  description: 'Number of actions to retrieve',
+},
+{
+  displayName: 'Block Hash',
+  name: 'blkHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['getActionsByBlock'],
+    },
+  },
+  default: '',
+  description: 'The hash of the block to get actions from',
+},
+{
+  displayName: 'Action Data',
+  name: 'action',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['action'],
+      operation: ['estimateGas'],
+    },
+  },
+  default: '{}',
+  description: 'Action object to estimate gas for',
+},
+{
+  displayName: 'Query Type',
+  name: 'queryType',
+  type: 'options',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockMetas', 'getBlocks']
+    }
+  },
+  options: [
+    { name: 'By Index', value: 'byIndex' },
+    { name: 'By Hash', value: 'byHash' }
+  ],
+  default: 'byIndex',
+  description: 'Query blocks by index or hash',
+},
+{
+  displayName: 'Start Index',
+  name: 'startIndex',
+  type: 'number',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockMetas', 'getBlocks'],
+      queryType: ['byIndex']
+    }
+  },
+  default: 1,
+  description: 'Starting block index to query from',
+},
+{
+  displayName: 'Count',
+  name: 'count',
+  type: 'number',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockMetas', 'getBlocks'],
+      queryType: ['byIndex']
+    }
+  },
+  default: 1,
+  description: 'Number of blocks to retrieve',
+},
+{
+  displayName: 'Block Hash',
+  name: 'blockHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockMetas', 'getBlocks'],
+      queryType: ['byHash']
+    }
+  },
+  default: '',
+  description: 'Block hash in hexadecimal format',
 },
 {
   displayName: 'Start Height',
@@ -596,107 +840,120 @@ export class IoTeX implements INodeType {
 },
 {
 	displayName: 'Address',
-	name: 'byAddr',
+	name: 'address',
 	type: 'string',
 	required: true,
-	displayOptions: {
-		show: {
-			resource: ['action'],
-			operation: ['getActions'],
-		},
-	},
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenBalance', 'getTokenTransfers'] } },
 	default: '',
-	description: 'Address to get actions for',
+	description: 'IoTeX address to check balance or transfers for',
+},
+{
+	displayName: 'Contract Address',
+	name: 'contractAddress',
+	type: 'string',
+	required: true,
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenBalance', 'getTokenMetadata', 'getTokenHolders'] } },
+	default: '',
+	description: 'Token contract address',
+},
+{
+	displayName: 'Token Address',
+	name: 'tokenAddress',
+	type: 'string',
+	required: false,
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenTransfers'] } },
+	default: '',
+	description: 'Token contract address for filtering transfers',
 },
 {
 	displayName: 'Start',
 	name: 'start',
 	type: 'number',
-	displayOptions: {
-		show: {
-			resource: ['action'],
-			operation: ['getActions'],
-		},
-	},
+	required: false,
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenTransfers'] } },
 	default: 0,
-	description: 'Start index for pagination',
+	description: 'Starting index for pagination',
 },
 {
 	displayName: 'Count',
 	name: 'count',
 	type: 'number',
-	displayOptions: {
-		show: {
-			resource: ['action'],
-			operation: ['getActions'],
-		},
-	},
+	required: false,
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenTransfers'] } },
 	default: 10,
-	description: 'Number of actions to retrieve',
+	description: 'Number of transfers to return',
 },
 {
-	displayName: 'Action Hash',
-	name: 'actionHash',
+	displayName: 'Offset',
+	name: 'offset',
+	type: 'number',
+	required: false,
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenHolders'] } },
+	default: 0,
+	description: 'Starting offset for pagination',
+},
+{
+	displayName: 'Limit',
+	name: 'limit',
+	type: 'number',
+	required: false,
+	displayOptions: { show: { resource: ['token'], operation: ['getTokenHolders'] } },
+	default: 100,
+	description: 'Maximum number of holders to return',
+},
+{
+	displayName: 'Offset',
+	name: 'offset',
+	type: 'number',
+	default: 0,
+	description: 'Number of records to skip',
+	displayOptions: {
+		show: {
+			resource: ['analytics'],
+			operation: ['readCandidates'],
+		},
+	},
+},
+{
+	displayName: 'Limit',
+	name: 'limit',
+	type: 'number',
+	default: 100,
+	description: 'Maximum number of records to return',
+	displayOptions: {
+		show: {
+			resource: ['analytics'],
+			operation: ['readCandidates'],
+		},
+	},
+},
+{
+	displayName: 'Epoch Number',
+	name: 'epochNumber',
+	type: 'number',
+	required: true,
+	default: 0,
+	description: 'The epoch number to get data for',
+	displayOptions: {
+		show: {
+			resource: ['analytics'],
+			operation: ['getEpochMeta'],
+		},
+	},
+},
+{
+	displayName: 'Voter Address',
+	name: 'voterAddress',
 	type: 'string',
 	required: true,
-	displayOptions: {
-		show: {
-			resource: ['action'],
-			operation: ['getActionByHash'],
-		},
-	},
 	default: '',
-	description: 'Hash of the action to retrieve',
-},
-{
-	displayName: 'Action Data',
-	name: 'action',
-	type: 'json',
-	required: true,
+	description: 'The voter address to get staking rewards for',
 	displayOptions: {
 		show: {
-			resource: ['action'],
-			operation: ['estimateGas'],
+			resource: ['analytics'],
+			operation: ['getAccount'],
 		},
 	},
-	default: '{}',
-	description: 'Action object to estimate gas for',
-},
-{
-  displayName: 'Contract Address',
-  name: 'contract',
-  type: 'string',
-  required: true,
-  displayOptions: { show: { resource: ['contract'], operation: ['readContractStorage', 'getContractMeta'] } },
-  default: '',
-  description: 'The smart contract address',
-},
-{
-  displayName: 'Storage Key',
-  name: 'key',
-  type: 'string',
-  required: true,
-  displayOptions: { show: { resource: ['contract'], operation: ['readContractStorage'] } },
-  default: '',
-  description: 'The storage key to read (hex encoded)',
-},
-{
-  displayName: 'Action',
-  name: 'action',
-  type: 'json',
-  required: true,
-  displayOptions: { show: { resource: ['contract'], operation: ['readState'] } },
-  default: '{}',
-  description: 'The action object for the read-only contract call',
-},
-{
-  displayName: 'Action Hash',
-  name: 'actionHash',
-  type: 'string',
-  required: true,
-  displayOptions: { show: { resource: ['contract'], operation: ['getReceiptByAction'] } },
-  default: '',
-  description: 'The transaction action hash',
 },
 {
   displayName: 'Epoch Number',
@@ -751,6 +1008,125 @@ export class IoTeX implements INodeType {
   displayOptions: { show: { resource: ['analytics'], operation: ['getActionAnalytics'] } },
   default: 1,
   description: 'Number of epochs to analyze',
+},
+{
+  displayName: 'Voter Address',
+  name: 'voterAddress',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['staking'], operation: ['getBuckets'] } },
+  default: '',
+  description: 'The voter address to get staking buckets for',
+},
+{
+  displayName: 'Offset',
+  name: 'offset',
+  type: 'number',
+  displayOptions: { show: { resource: ['staking'], operation: ['getBuckets'] } },
+  default: 0,
+  description: 'Number of records to skip',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: { show: { resource: ['staking'], operation: ['getBuckets'] } },
+  default: 100,
+  description: 'Maximum number of records to return',
+},
+{
+  displayName: 'Offset',
+  name: 'offset',
+  type: 'number',
+  displayOptions: { show: { resource: ['staking'], operation: ['getCandidates'] } },
+  default: 0,
+  description: 'Number of records to skip',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: { show: { resource: ['staking'], operation: ['getCandidates'] } },
+  default: 100,
+  description: 'Maximum number of records to return',
+},
+{
+  displayName: 'Include All',
+  name: 'includeAll',
+  type: 'boolean',
+  displayOptions: { show: { resource: ['staking'], operation: ['getCandidates'] } },
+  default: false,
+  description: 'Whether to include all candidates including inactive ones',
+},
+{
+  displayName: 'Voter Address',
+  name: 'voterAddress',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['staking'], operation: ['getVoterBuckets'] } },
+  default: '',
+  description: 'The voter address to get voting buckets for',
+},
+{
+  displayName: 'Candidate Name',
+  name: 'candidateName',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['staking'], operation: ['getCandidateBuckets'] } },
+  default: '',
+  description: 'The candidate name to get buckets for',
+},
+{
+  displayName: 'Offset',
+  name: 'offset',
+  type: 'number',
+  displayOptions: { show: { resource: ['staking'], operation: ['getCandidateBuckets'] } },
+  default: 0,
+  description: 'Number of records to skip',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: { show: { resource: ['staking'], operation: ['getCandidateBuckets'] } },
+  default: 100,
+  description: 'Maximum number of records to return',
+},
+{
+  displayName: 'Contract Address',
+  name: 'contract',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['readContractStorage', 'getContractMeta'] } },
+  default: '',
+  description: 'The smart contract address',
+},
+{
+  displayName: 'Storage Key',
+  name: 'key',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['readContractStorage'] } },
+  default: '',
+  description: 'The storage key to read (hex encoded)',
+},
+{
+  displayName: 'Action',
+  name: 'action',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['readState'] } },
+  default: '{}',
+  description: 'The action object for the read-only contract call',
+},
+{
+  displayName: 'Action Hash',
+  name: 'actionHash',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['getReceiptByAction'] } },
+  default: '',
+  description: 'The transaction action hash',
 },
 {
   displayName: 'Method',
@@ -1527,14 +1903,18 @@ export class IoTeX implements INodeType {
     switch (resource) {
       case 'account':
         return [await executeAccountOperations.call(this, items)];
-      case 'block':
-        return [await executeBlockOperations.call(this, items)];
       case 'action':
         return [await executeActionOperations.call(this, items)];
-      case 'contract':
-        return [await executeContractOperations.call(this, items)];
+      case 'block':
+        return [await executeBlockOperations.call(this, items)];
+      case 'token':
+        return [await executeTokenOperations.call(this, items)];
       case 'analytics':
         return [await executeAnalyticsOperations.call(this, items)];
+      case 'staking':
+        return [await executeStakingOperations.call(this, items)];
+      case 'contract':
+        return [await executeContractOperations.call(this, items)];
       case 'delegate':
         return [await executeDelegateOperations.call(this, items)];
       case 'blockchainData':
@@ -1570,526 +1950,25 @@ async function executeAccountOperations(
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
+      const address = this.getNodeParameter('address', i) as string;
 
       switch (operation) {
         case 'getAccount': {
-          const address = this.getNodeParameter('address', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getAccount?address=${encodeURIComponent(address)}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        case 'sendRawAction': {
-          const data = this.getNodeParameter('data', i) as string;
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/sendAction`,
+            url: `${credentials.baseUrl}/v1/accounts`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${credentials.apiKey}`
             },
-            body: {
-              data: data,
-            },
-            json: true,
+            body: JSON.stringify({ address }),
+            json: true
           };
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        case 'getAccountMeta': {
-          const address = this.getNodeParameter('address', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getAccountMeta?address=${encodeURIComponent(address)}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeBlockOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getBlockMetas': {
-          const start = this.getNodeParameter('start', i) as number;
-          const count = this.getNodeParameter('count', i) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getBlockMetas`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              start,
-              count,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getChainMeta': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getChainMeta`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockByHeight': {
-          const height = this.getNodeParameter('height', i) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getBlockByHeight`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              height,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockByHash': {
-          const blkHash = this.getNodeParameter('blkHash', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getBlockByHash`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              blkHash,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(
-            this.getNode(),
-            `Unknown operation: ${operation}`,
-          );
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeActionOperations(
-	this: IExecuteFunctions,
-	items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-	const returnData: INodeExecutionData[] = [];
-	const operation = this.getNodeParameter('operation', 0) as string;
-	const credentials = await this.getCredentials('iotexApi') as any;
-
-	for (let i = 0; i < items.length; i++) {
-		try {
-			let result: any;
-
-			switch (operation) {
-				case 'getActions': {
-					const byAddr = this.getNodeParameter('byAddr', i) as string;
-					const start = this.getNodeParameter('start', i) as number;
-					const count = this.getNodeParameter('count', i) as number;
-
-					const options: any = {
-						method: 'GET',
-						url: `${credentials.baseUrl}/getActions`,
-						headers: {
-							'X-API-Key': credentials.apiKey,
-							'Content-Type': 'application/json',
-						},
-						qs: {
-							byAddr,
-							start,
-							count,
-						},
-						json: true,
-					};
-
-					result = await this.helpers.httpRequest(options) as any;
-					break;
-				}
-
-				case 'getActionByHash': {
-					const actionHash = this.getNodeParameter('actionHash', i) as string;
-
-					const options: any = {
-						method: 'GET',
-						url: `${credentials.baseUrl}/getActionByHash`,
-						headers: {
-							'X-API-Key': credentials.apiKey,
-							'Content-Type': 'application/json',
-						},
-						qs: {
-							actionHash,
-						},
-						json: true,
-					};
-
-					result = await this.helpers.httpRequest(options) as any;
-					break;
-				}
-
-				case 'estimateGas': {
-					const action = this.getNodeParameter('action', i) as object;
-
-					const options: any = {
-						method: 'POST',
-						url: `${credentials.baseUrl}/estimateActionGasConsumption`,
-						headers: {
-							'X-API-Key': credentials.apiKey,
-							'Content-Type': 'application/json',
-						},
-						body: {
-							action,
-						},
-						json: true,
-					};
-
-					result = await this.helpers.httpRequest(options) as any;
-					break;
-				}
-
-				case 'suggestGasPrice': {
-					const options: any = {
-						method: 'POST',
-						url: `${credentials.baseUrl}/suggestGasPrice`,
-						headers: {
-							'X-API-Key': credentials.apiKey,
-							'Content-Type': 'application/json',
-						},
-						body: {},
-						json: true,
-					};
-
-					result = await this.helpers.httpRequest(options) as any;
-					break;
-				}
-
-				default:
-					throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-			}
-
-			returnData.push({
-				json: result,
-				pairedItem: {
-					item: i,
-				},
-			});
-		} catch (error: any) {
-			if (this.continueOnFail()) {
-				returnData.push({
-					json: {
-						error: error.message,
-					},
-					pairedItem: {
-						item: i,
-					},
-				});
-			} else {
-				throw error;
-			}
-		}
-	}
-
-	return returnData;
-}
-
-async function executeContractOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'readContractStorage': {
-          const contract = this.getNodeParameter('contract', i) as string;
-          const key = this.getNodeParameter('key', i) as string;
-          
+        case 'getAccountBalance': {
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/readContractStorage`,
+            url: `${credentials.baseUrl}/v1/accounts/balance`,
             headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': credentials.apiKey,
-            },
-            body: {
-              contract,
-              key,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'readState': {
-          const action = this.getNodeParameter('action', i) as object;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/readState`,
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': credentials.apiKey,
-            },
-            body: {
-              action,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getReceiptByAction': {
-          const actionHash = this.getNodeParameter('actionHash', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/getReceiptByAction`,
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': credentials.apiKey,
-            },
-            body: {
-              actionHash,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getContractMeta': {
-          const contract = this.getNodeParameter('contract', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getContractMeta`,
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': credentials.apiKey,
-            },
-            qs: {
-              contract,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeAnalyticsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('iotexApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getBuckets': {
-          const epochNum = this.getNodeParameter('epochNum', i) as number;
-          const count = this.getNodeParameter('count', i) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getAnalyticsBuckets`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              epochNum,
-              count,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getRewards': {
-          const epochNum = this.getNodeParameter('epochNum', i) as number;
-          const delegateName = this.getNodeParameter('delegateName', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getAnalyticsRewards`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              epochNum,
-              ...(delegateName && { delegateName }),
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getActionAnalytics': {
-          const startEpoch = this.getNodeParameter('startEpoch', i) as number;
-          const epochCount = this.getNodeParameter('epochCount', i) as number;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getAnalyticsActions`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              startEpoch,
-              epochCount,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getChainStats': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/getChainStats`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }

@@ -11,16 +11,14 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "sourceMap": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "sourceMap": true
   },
   "include": [
     "nodes/**/*",
     "credentials/**/*"
   ],
   "exclude": [
-    "node_modules/**/*",
-    "dist/**/*"
+    "node_modules",
+    "dist"
   ]
 }

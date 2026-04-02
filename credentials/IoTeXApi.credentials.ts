@@ -1,7 +1,4 @@
-import {
-	ICredentialType,
-	INodeProperties,
-} from 'n8n-workflow';
+import { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class IoTeXApi implements ICredentialType {
 	name = 'ioTeXApi';
@@ -14,15 +11,14 @@ export class IoTeXApi implements ICredentialType {
 			type: 'string',
 			typeOptions: { password: true },
 			default: '',
-			required: true,
-			description: 'API key for IoTeX Babel API. Obtain from the IoTeX developer portal.',
+			description: 'Your IoTeX API key from the developer portal',
 		},
 		{
 			displayName: 'API Base URL',
 			name: 'baseUrl',
 			type: 'string',
-			default: 'https://babel-api.mainnet.iotex.io/v1',
-			description: 'Base URL for the IoTeX API',
+			default: 'https://babel-api.mainnet.iotex.io',
+			description: 'The base URL for the IoTeX API',
 		},
 	];
 }
